@@ -1,0 +1,9 @@
+project:
+  output-dir: _docs
+
+website:
+  title: "FRD"
+  site-url: "https://BenAbramowitz.github.io/FRD"
+  description: "Analysis of Flexible Representative Democracy voting system"
+  repo-branch: main
+  repo-url: "https://github.com/BenAbramowitz/FRD"
