@@ -1,0 +1,2 @@
+# FRD
+Flexible Representative Democracy
