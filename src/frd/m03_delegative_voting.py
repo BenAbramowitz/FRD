@@ -47,7 +47,7 @@ class RD():
         self.n_reps = n_reps
         self.default, self.default_params = default, default_params
 
-        self.voter_majority_outcomes = None
+        self.voter_majority_outcomes = profile.get_voter_majority()
 
         self.rep_ids = []
         self.rep_prefs = None
@@ -93,17 +93,19 @@ class RD():
         return self.voter_majority_outcomes
 
     def elect_reps(self):
+        if self.election_rule is None:
+            raise ValueError('Election rule is currently None (not set yet), func elect_reps cannot elect reps')
         self.rep_ids, self.rep_election_scores = self.election_rule(self.profile, self.n_reps)
-        return self.rep_ids, self.cand_election_scores
+        return self.rep_ids, self.cand_election_scores, self.rep_prefs
     
     def pull_rep_prefs(self):
-        c_prefs = self.profile.get_issue_prefs[1]
-        self.rep_prefs = c_prefs[:,self.rep_ids]
+        c_prefs = self.profile.get_issue_prefs()[1]
+        self.rep_prefs = c_prefs[self.rep_ids,:]
         return self.rep_prefs
     
     def outcome_agreement(self):
         if self.default == 'uniform':
-            rep_outcomes = majority(self.get_rep_prefs())
+            rep_outcomes = majority(self.rep_prefs)
         elif self.default == 'election_scores':
             self.rep_weights = [self.cand_election_scores[c] if c in self.rep_ids else 0 for c in range(self.profile.get_n_cands())]
             rep_outcomes = weighted_majority(self.rep_prefs, self.rep_weights)
@@ -112,7 +114,7 @@ class RD():
         else:
             raise ValueError(f'Default weighting not implemented: {self.default}')
 
-        agreement = np.count_nonzero(rep_outcomes != self.voter_majority_outcomes) / len(rep_outcomes)
+        agreement = np.count_nonzero(rep_outcomes == self.profile.get_voter_majority()) / len(rep_outcomes)
         return agreement
     
     def run_RD(self):

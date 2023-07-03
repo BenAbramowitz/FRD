@@ -63,7 +63,7 @@ def score_orders(profile, score_vector):
 
 def scoring_rule(profile:profiles.Profile, score_vector, n_winners, seed=None):
     scores = score_orders(profile, score_vector)
-    augmented_scores = helper.array1D_to_sorted_indices(scores, seed)
+    augmented_scores = helper.array1D_to_sorted(scores, seed)
     winners = augmented_scores[:,2][-n_winners:].astype(int)
     return winners, scores
 
@@ -129,17 +129,19 @@ def max_agreement(profile, n_winners, seed=None):
     return winners, agreements_tiebroken
 
 def rule_dispatcher(rule_name:str):
-    if rule_name == 'borda':
+    if not isinstance(rule_name, str):
+        raise ValueError('Rule name must be a string, cannot be: {rule_name}')
+    if rule_name.lower() == 'borda':
         return borda
-    elif rule_name == 'plurality':
+    elif rule_name.lower() == 'plurality':
         return plurality
-    elif rule_name == 'random_winners':
+    elif rule_name.lower() == 'random_winners':
         return random_winners
-    elif rule_name == 'max_approval':
+    elif rule_name.lower() == 'max_approval':
         return max_approval
-    elif rule_name == 'rav':
+    elif rule_name.lower() == 'rav':
         return rav
-    elif rule_name == 'max_agreement':
+    elif rule_name.lower() == 'max_agreement':
         return max_agreement
     else:
         raise ValueError(f'Unable to dispatch rule: {rule_name}')
