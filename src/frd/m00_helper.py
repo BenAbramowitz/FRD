@@ -13,7 +13,7 @@ def create_tiebreakers(n_vals, dtype=int, seed=None):
     else:
         raise ValueError('Invalid dtype for create_tiebreakers: {dtype}')
 
-def array1D_to_sorted(array:np.ndarray, seed:int=None, tiebreakers:np.ndarray=None):
+def array1D_to_sorted(array:np.ndarray, seed:int=None, tiebreakers=None, dtype=int):
     '''
     Does sort/argsort with ties are broken randomly instead of lexicographically.
 
@@ -37,7 +37,6 @@ def array1D_to_sorted(array:np.ndarray, seed:int=None, tiebreakers:np.ndarray=No
     Made tiebreakers an arg so tiebreakers can be reused across profiles without having to regenerate each time
 
     '''
-    dtype = type(array[0])
     if tiebreakers is None: 
         if seed is not None: np.random.seed(seed)
         tiebreakers = create_tiebreakers(len(array), dtype, seed=seed)
