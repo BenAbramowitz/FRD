@@ -71,7 +71,7 @@ class Profile():
                 #self.approval_indicators[v_id] = approvable[v_id]
                 self.approvals[v_id] = np.nonzero(approvable[v_id])[0]
             else: #voter would approve more than k based on threshold if allowed to
-                distances_augmented = helper.array1D_to_sorted(self.distances[v_id], seed=v_id, tiebreakers=None)
+                distances_augmented = helper.array1D_to_sorted(self.distances[v_id], seed=None, tiebreakers=None)
                 self.approvals[v_id] = distances_augmented[:,2][:k].astype(int)
                 #self.approval_indicators[v_id] = np.asarray([1 if c in self.approvals[v_id] else 0 for c in range(self.n_cands)])
         return self.approvals#, self.approval_indicators
@@ -96,7 +96,7 @@ class Profile():
         '''
         if self.distances is None:
             self.issues_to_distances()
-        self.orders = {v_id:helper.array1D_to_sorted(self.distances[v_id], seed=v_id)[:,2].astype(int) for v_id in range(self.n_voters)}
+        self.orders = {v_id:helper.array1D_to_sorted(self.distances[v_id], seed=None)[:,2].astype(int) for v_id in range(self.n_voters)}
         return self.orders
     
     def orders_to_ordermaps(self)->dict:
@@ -122,7 +122,7 @@ class Profile():
         self.agreements = {v_id: 1 - self.distances[v_id] for v_id in range(self.n_voters)}
         return self.agreements
     
-    def new_instance(self, approvals = True, ordinals = True, agreements = True, seed=None):
+    def new_instance(self, approvals = True, ordinals = True, agreements = True):
         '''
         Creates new profile, distances, and derived election profiles indicated by kwargs.
 
@@ -132,8 +132,6 @@ class Profile():
             (n_voters, n_cands, n_issues, voters_p, cands_p, and approval_params).
         This is to save time and memory creating new instances with consistent params without a new Profile object each time
         '''
-        if seed is not None:
-            np.random.seed(seed)
         self.create_issue_prefs()
         self.issues_to_distances()
         self.voter_majority_vote()

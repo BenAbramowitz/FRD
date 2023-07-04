@@ -30,13 +30,8 @@ def weighted_majority(binary_matrix, weights):
     return np.array(outcomes)
 
 class RD():
-    '''Elect reps, assign them default weight (e.g uniform or from election)
-    
-    
-    TO DO
-    ------
-    Election scores may be different than the election rule, e.g. use plurality for election but Borda scores
-    
+    '''
+    Elect reps, assign them uniform weights or weights from election, and then take (weighted) majority vote
     '''
     def __init__(self, profile:profiles.Profile=None, election_rule:str=None, n_reps:int=None, default='uniform', default_params=None) -> None:
         self.profile = profile
@@ -95,7 +90,7 @@ class RD():
     def elect_reps(self):
         if self.election_rule is None:
             raise ValueError('Election rule is currently None (not set yet), func elect_reps cannot elect reps')
-        self.rep_ids, self.rep_election_scores = self.election_rule(self.profile, self.n_reps)
+        self.rep_ids, self.cand_election_scores = self.election_rule(self.profile, self.n_reps)
         return self.rep_ids, self.cand_election_scores, self.rep_prefs
     
     def pull_rep_prefs(self):
@@ -109,8 +104,10 @@ class RD():
         elif self.default == 'election_scores':
             self.rep_weights = [self.cand_election_scores[c] if c in self.rep_ids else 0 for c in range(self.profile.get_n_cands())]
             rep_outcomes = weighted_majority(self.rep_prefs, self.rep_weights)
-        elif self.default == 'best_k':
-            raise ValueError('Best k weighting not implemented ')
+        elif self.default == 'borda_scores':
+            raise ValueError(f'Default weighting not implemented: {self.default}')
+        elif self.default == 'approval_counts':
+            raise ValueError(f'Default weighting not implemented: {self.default}')
         else:
             raise ValueError(f'Default weighting not implemented: {self.default}')
 
@@ -126,13 +123,6 @@ class RD():
     def new_instance(self):
         self.profile.new_instance()
         self.run_RD()
-
-class WRD(RD):
-    '''
-    Like RD, but now reps are weighted. Each rep has a consistent weight on all issues, fixed after the election.
-    '''
-    pass
-
 
 class FRD(RD):
     '''

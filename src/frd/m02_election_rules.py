@@ -88,13 +88,14 @@ def borda(profile:profiles.Profile, n_winners:int, seed=None):
 #     return winners
 
 def max_approval(profile, n_winners, seed=None):
-    approvals = vars(profile)['approvals'].values()
-    approval_counts = np.sum(np.vstack(approvals), axis=0)
+    approval_indicators = list(vars(profile)['approval_indicators'].values())
+    #print(f'\n\napprovals_indicators: {approval_indicators}')
+    approval_counts = np.sum(np.vstack(approval_indicators), axis=0)
     # print(f'approval counts: {approval_counts}')
     winners = helper.array1D_to_sorted(approval_counts, seed)[:,2][-n_winners:]
     return winners, approval_counts
 
-def rav(profile, n_winners, seed=None):
+def rav(profile, n_winners):
     n_cands = vars(profile)['n_cands']
     candidates = list(range(n_cands))
     approvals = vars(profile)['approvals']
@@ -121,12 +122,13 @@ def rav(profile, n_winners, seed=None):
     return result, None #does not score the winners
 
 def max_agreement(profile, n_winners, seed=None):
-    agreements = vars(profile)['agreements'].values()
+    agreements = list(vars(profile)['agreements'].values())
     agreement_sums = np.sum(np.vstack(agreements), axis=0)
     augmented_agreements = helper.array1D_to_sorted(agreement_sums, seed)
     agreements_tiebroken = augmented_agreements[:,0]
-    winners = augmented_agreements[:,2][-n_winners:]
-    return winners, agreements_tiebroken
+    winners = augmented_agreements[:,2][-n_winners:].astype(int)
+    #print(f"max_agreement winners: {winners}")
+    return winners, agreement_sums
 
 def rule_dispatcher(rule_name:str):
     if not isinstance(rule_name, str):
