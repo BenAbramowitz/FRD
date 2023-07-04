@@ -12,18 +12,36 @@ import frd.m06_analysis as analysis
 
 if __name__ == '__main__':
     N_ITER = 1
-    profile_param_vals = {'n_voters':[3],
-                    'n_cands':[3],
-                    'n_issues':[4,10], #Varying number of issues
-                    'voters_p':[0.5],
-                    'cands_p':[0.5],
-                    'approval_params':[(3, 0.5)]}
-    election_param_vals = {'election_rules':['max_approval'],
-                    'n_reps':[1]}
-    del_voting_param_vals = {'default_style':['uniform'],
-                        'default_params':[None],
-                        'delegation_style':[None],
-                        'delegation_params':[None]}
+
+    #Set params for creating preference profiles
+    N_VOTERS = [3]
+    N_CANDS = [3]
+    N_ISSUES = [4,10] #Varying number of issues
+    VOTERS_P = [0.5]
+    CANDS_P = [0.5]
+    APPROVAL_PARAMS = [(N_CANDS, 0.5)]
+    profile_param_vals = {'n_voters':N_VOTERS,
+                    'n_cands':N_CANDS,
+                    'n_issues':N_ISSUES,
+                    'voters_p':VOTERS_P,
+                    'cands_p':CANDS_P,
+                    'approval_params':APPROVAL_PARAMS}
+    
+    #Set params for electing reps
+    ELECTION_RULES = ['max_approval']
+    N_REPS = [1]
+    election_param_vals = {'election_rules':ELECTION_RULES,
+                    'n_reps':N_REPS}
+
+    #Set params for delegative voting
+    DEFAULT_STYLE = ['uniform']
+    DEFAULT_PARAMS = [None]
+    DELEGATION_STYLE = [None]
+    DELEGATION_PARAMS = [None]
+    del_voting_param_vals = {'default_style':DEFAULT_STYLE,
+                        'default_params':DEFAULT_PARAMS,
+                        'delegation_style':DELEGATION_STYLE,
+                        'delegation_params':DELEGATION_PARAMS}
     
     data, experiment_params = simulate.run_simulation(N_ITER, profile_param_vals, election_param_vals, del_voting_param_vals)
     # print(data)
