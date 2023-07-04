@@ -26,6 +26,7 @@ Naming conventions for modules within each directory is that we try to keep them
 
 
 ## Dev Notes / Implementation Details
+- RAV currently runns about ~20 times slower than borda, plurality, and max_approval
 - Currently ordinal prefs (orders, ordermaps) cannot be incomplete. This differs from older version. This is because these ordinal preferences are dicts where keys are voters and values are 1D numpy arrays of fixed length. Old version had dict of dicts, as in {v1 : {c1:0, c2:1}, v2: {c1:1, c2:0}}
 - score_orders and score_ordermaps currently use nested for loops that are slow, but easy to read and debug. Can speed up with map or comprehensions later if needed.
 - Currently stv/irv not implemented. Could use whalrus, but need to convert the profile order to a whalrus ballot . If we want to use whalrus for other rules in the future it will be more efficient to have this conversion be a method of the Profile object.
