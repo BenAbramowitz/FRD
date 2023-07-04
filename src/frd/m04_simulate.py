@@ -14,7 +14,11 @@ def profiles_needed(election_rules_list):
     agreements = not set(election_rules_set).isdisjoint(AGREEMENT_RULES) #bool
     return {'approvals':approvals, 'ordinals':ordinals, 'agreements':agreements}
 
-def run_simulation(n_iter, profile_param_vals, election_param_vals, del_voting_param_vals, verbose=False):
+def tuple_to_hashable(tup):
+    #Converts a tuple with non-hashable types into a tuple of strings (e.g. to be used as keys in dict)
+    return tuple(str(x) for x in tup)
+
+def run_simulation(n_iter, profile_param_vals, election_param_vals, del_voting_param_vals, verbose=False, save=False):
     '''
     PARAMS
     --------
@@ -37,7 +41,8 @@ def run_simulation(n_iter, profile_param_vals, election_param_vals, del_voting_p
     
     '''
     experiment_params = helper.merge_dicts([profile_param_vals, election_param_vals, del_voting_param_vals])
-    experiment_params['n_iter'] = [n_iter]
+    # experiment_params['n_iter'] = [n_iter]
+    param_names = helper.params_dict_to_tuples(experiment_params)[1]
     data = {} #keys are tuples of all params, values are lists of agreements
     for it in range(n_iter): #PARALLELIZE HERE
         for profile_params in helper.params_dict_to_tuples(profile_param_vals)[0]:
@@ -59,22 +64,24 @@ def run_simulation(n_iter, profile_param_vals, election_param_vals, del_voting_p
             for election_params in helper.params_dict_to_tuples(election_param_vals)[0]:
                 # elect reps to get rep_ids and election_scores (if election rule provides scores)
                 election_rule_name, n_reps = election_params
-                election_rule = rules.rule_dispatcher(election_rule_name)
-                rep_ids, election_scores = election_rule(prof, n_reps)
-                if verbose:
-                    print(f'election rule: {election_rule_name}')
-                    print(f'rep_ids: {rep_ids}')
-                    print(f'election_scores: {election_scores}')
                 
-                for del_voting_params in helper.params_dict_to_tuples(del_voting_param_vals):
-                    # pull rep prefs
-                    # determine whether RD, WRD, or FRD
-                    # if RD: do majority vote
+                for del_voting_params in helper.params_dict_to_tuples(del_voting_param_vals)[0]:
+                    default_style, default_params, delegation_style, delegation_params = del_voting_params
+                    if data.get(tuple_to_hashable(profile_params+election_params+del_voting_params)) is None:
+                        data[tuple_to_hashable(profile_params+election_params+del_voting_params)] = []
+
+                    if delegation_style is None: #RD
+                        rd = d_voting.RD(prof, election_rule_name, n_reps, default=default_style, default_params=default_params)
+                        agreement = rd.run_RD()
+                        data[tuple_to_hashable(profile_params+election_params+del_voting_params)].append(agreement)
+                    else:
+                        raise ValueError('Other weighting/delegating schemes not implemented yet in run_simulation')
                     # if WRD: set weights (same for all issues), weighted majority vote 
                     # if FRD: set default issue-specific weights, update weights by delegation, weighted majority vote
-                    # compute agreement with voter majority
-                    # add agreement to list in data dict with key as ordered tuple of unpacked params from profile, election, and voting
-                    pass
 
+    if verbose:
+        print(f'data: {data}')
+        print(f'param_names : {param_names}')
+        print(f'n_iter: {n_iter}')
 
-    return data, (n_iter, profile_param_vals, election_param_vals, del_voting_param_vals)
+    return data, param_names, n_iter, (profile_param_vals, election_param_vals, del_voting_param_vals)
