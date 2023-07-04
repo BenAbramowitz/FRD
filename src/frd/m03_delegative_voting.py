@@ -102,6 +102,7 @@ class RD():
         if self.default == 'uniform':
             rep_outcomes = majority(self.rep_prefs)
         elif self.default == 'election_scores':
+            #Give reps their election scores and all other cands zero, then thake weighted_majority vote
             self.rep_weights = [self.cand_election_scores[c] if c in self.rep_ids else 0 for c in range(self.profile.get_n_cands())]
             rep_outcomes = weighted_majority(self.rep_prefs, self.rep_weights)
         elif self.default == 'borda_scores':

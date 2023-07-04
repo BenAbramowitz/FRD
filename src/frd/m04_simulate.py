@@ -14,7 +14,7 @@ def profiles_needed(election_rules_list):
     agreements = not set(election_rules_set).isdisjoint(AGREEMENT_RULES) #bool
     return {'approvals':approvals, 'ordinals':ordinals, 'agreements':agreements}
 
-def run_simulation(n_iter, profile_param_vals, election_param_vals, del_voting_param_vals):
+def run_simulation(n_iter, profile_param_vals, election_param_vals, del_voting_param_vals, verbose=False):
     '''
     PARAMS
     --------
@@ -39,7 +39,7 @@ def run_simulation(n_iter, profile_param_vals, election_param_vals, del_voting_p
     experiment_params = helper.merge_dicts([profile_param_vals, election_param_vals, del_voting_param_vals])
     experiment_params['n_iter'] = [n_iter]
     data = {} #keys are tuples of all params, values are lists of agreements
-    for it in range(n_iter):
+    for it in range(n_iter): #PARALLELIZE HERE
         for profile_params in helper.params_dict_to_tuples(profile_param_vals)[0]:
             # print(f'\nprofile params: {profile_params}')
             (n_voters, n_cands, n_issues, voters_p, cands_p, approval_params) = profile_params
@@ -47,15 +47,24 @@ def run_simulation(n_iter, profile_param_vals, election_param_vals, del_voting_p
             prof = profiles.Profile(n_voters, n_cands, n_issues, 
                                     voters_p, cands_p, approval_params)
             
-            # create new instance
-            # find profile derivatives needed, and derive only the profiles necessary in profle object (depends on election_param_vals)
+            # create new profile instance
+            # derive only the election profiles necessary, depending on what rules will be used
             election_rules = election_param_vals.get('election_rules')
             prof.new_instance(**profiles_needed(election_rules))
-            # print(f'election rules: {election_rules}')
-            # print(vars(prof))
+            
+            if verbose: 
+                print(f'election rules: {election_rules}')
+                print(vars(prof))
 
-            for election_params in helper.params_dict_to_tuples(election_param_vals):
-                # elect reps to get rep_ids and election_scores (if election rule provides them)
+            for election_params in helper.params_dict_to_tuples(election_param_vals)[0]:
+                # elect reps to get rep_ids and election_scores (if election rule provides scores)
+                election_rule_name, n_reps = election_params
+                election_rule = rules.rule_dispatcher(election_rule_name)
+                rep_ids, election_scores = election_rule(prof, n_reps)
+                if verbose:
+                    print(f'election rule: {election_rule_name}')
+                    print(f'rep_ids: {rep_ids}')
+                    print(f'election_scores: {election_scores}')
                 
                 for del_voting_params in helper.params_dict_to_tuples(del_voting_param_vals):
                     # pull rep prefs
@@ -68,4 +77,4 @@ def run_simulation(n_iter, profile_param_vals, election_param_vals, del_voting_p
                     pass
 
 
-    return data, experiment_params
+    return data, (n_iter, profile_param_vals, election_param_vals, del_voting_param_vals)

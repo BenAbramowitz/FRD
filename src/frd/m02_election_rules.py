@@ -9,7 +9,7 @@ def random_winners(cands, n_winners, seed=None):
     if seed is not None: np.random.seed(seed)
     if n_winners > len(cands):
         raise ValueError(f'Cannot elect {n_winners} reps with only {len(cands)} cands')
-    return np.random.choice(cands, n_winners, replace=False), None #does not score the winners
+    return np.random.choice(cands, n_winners, replace=False), np.ones(len(cands)) #election_scores are uniform
 
 def score_ordermaps(profile:profiles.Profile, score_vector:np.ndarray):
     '''
@@ -119,7 +119,7 @@ def rav(profile, n_winners):
         array_augmented = np.column_stack((order, tiebreakers))
         order_tiebroken = np.lexsort((array_augmented[:, 1], array_augmented[:, 0]))
         result.append(order_tiebroken[0])
-    return result, None #does not score the winners
+    return result, max_approval(profile, n_winners)[1] #election scores are approval counts
 
 def max_agreement(profile, n_winners, seed=None):
     agreements = list(vars(profile)['agreements'].values())
@@ -132,7 +132,7 @@ def max_agreement(profile, n_winners, seed=None):
 
 def rule_dispatcher(rule_name:str):
     if not isinstance(rule_name, str):
-        raise ValueError('Rule name must be a string, cannot be: {rule_name}')
+        raise ValueError(f'Rule name must be a string, cannot be: {rule_name}')
     if rule_name.lower() == 'borda':
         return borda
     elif rule_name.lower() == 'plurality':

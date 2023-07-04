@@ -43,7 +43,10 @@ if __name__ == '__main__':
                         'delegation_style':DELEGATION_STYLE,
                         'delegation_params':DELEGATION_PARAMS}
     
-    data, experiment_params = simulate.run_simulation(N_ITER, profile_param_vals, election_param_vals, del_voting_param_vals)
+    data, experiment_params = simulate.run_simulation(N_ITER, profile_param_vals, 
+                                                      election_param_vals, 
+                                                      del_voting_param_vals, 
+                                                      verbose=True)
     # print(data)
     # print(experiment_params)
     # filename = save_data.name_dataset(experiment_params)
