@@ -4,7 +4,6 @@ import numpy as np
 
 from . import m00_helper as helper
 
-
 class Profile():
     def __init__(self, n_voters:int, n_cands:int, n_issues:int, voters_p, cands_p, approval_params:Tuple[int,float]):
         self.n_voters, self.n_cands = n_voters, n_cands
@@ -28,7 +27,17 @@ class Profile():
     def create_issue_prefs(self):
         self.v_pref = np.random.binomial(1, self.voters_p, size=(self.n_voters, self.n_issues))
         self.c_pref = np.random.binomial(1, self.cands_p, size=(self.n_cands, self.n_issues))
+        self.reset_derivatives()
         return self.v_pref, self.c_pref
+    
+    def reset_derivatives(self):
+        self.distances = None #np.empty((n_voters, n_cands))
+        self.approvals = {} #dict of numpy arrays
+        self.approval_indicators = {} #dict of numpy arrays
+        self.ordermaps = {} #dict of numpy arrays
+        self.orders = {} #dict of numpy arrays
+        self.agreements = {} #dict of numpy arrays
+        self.voter_majority_outcomes = None #numpy array of len n_issues
     
     def voter_majority_vote(self):
         self.voter_majority_outcomes = np.random.binomial(1, 0.5, size=(self.n_issues)) #initialized randomly so unchanged vals break ties randomly
@@ -132,7 +141,7 @@ class Profile():
             (n_voters, n_cands, n_issues, voters_p, cands_p, and approval_params).
         This is to save time and memory creating new instances with consistent params without a new Profile object each time
         '''
-        self.create_issue_prefs()
+        self.create_issue_prefs() #automatically resets all derivatives from issue prefs
         self.issues_to_distances()
         self.voter_majority_vote()
         if approvals: 
@@ -156,6 +165,7 @@ class Profile():
     def set_issue_prefs(self, v_pref, c_pref):
         self.v_pref = v_pref
         self.c_pref = c_pref
+        self.reset_derivatives()
         return self.v_pref, self.c_pref
     
     def set_approval_params(self, k, threshold):
@@ -199,27 +209,3 @@ class Profile():
     
     def get_voter_majority(self):
         return self.voter_majority_outcomes
-
-#Quick Tests
-# if __name__ == '__main__':
-#     import m00_helper as helper
-
-#     N_VOTERS = 1
-#     N_CANDS = 5
-#     N_ISSUES = 3
-#     VOTERS_P = 0.5
-#     CANDS_P = 0.5
-#     APPROVAL_PARAMS = (2, 0.5)
-#     SEED = 2
-
-#     np.random.seed(SEED)
-#     profile = Profile(N_VOTERS, N_CANDS, N_ISSUES, VOTERS_P, CANDS_P, APPROVAL_PARAMS)
-#     profile.create_issue_prefs()
-#     profile.issues_to_distances()
-#     profile.distances_to_approvals()
-#     profile.distances_to_ordinals()
-#     profile.distances_to_agreements()
-#     print(vars(profile))
-#     print('\n\n\n')
-#     profile.new_instance(seed=SEED+1)
-#     vars(profile)
