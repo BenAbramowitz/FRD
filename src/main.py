@@ -11,7 +11,7 @@ import frd.m05_save_data as save_data
 import frd.m06_analysis as analysis
 
 if __name__ == '__main__':
-    N_ITER = 1
+    N_ITER = 3
 
     #Set params for creating preference profiles
     N_VOTERS = [3]
@@ -43,11 +43,16 @@ if __name__ == '__main__':
                         'delegation_style':DELEGATION_STYLE,
                         'delegation_params':DELEGATION_PARAMS}
     
-    data, experiment_params = simulate.run_simulation(N_ITER, profile_param_vals, 
+    data, param_names, n_iter, param_vals = simulate.run_simulation(N_ITER, profile_param_vals, 
                                                       election_param_vals, 
                                                       del_voting_param_vals, 
-                                                      verbose=True)
-    # print(data)
+                                                      verbose=False,
+                                                      save=True)
+    print('-----------------------------')
+    print(data)
+    print(param_names)
+    print(n_iter)
+    print(param_vals)
     # print(experiment_params)
     # filename = save_data.name_dataset(experiment_params)
     # save_data.save_raw(data, filename, filetype = 'pickle')
