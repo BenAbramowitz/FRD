@@ -28,7 +28,7 @@ if __name__ == '__main__':
                     'approval_params':APPROVAL_PARAMS}
     
     #Set params for electing reps
-    ELECTION_RULES = ['max_approval']
+    ELECTION_RULES = ['max_approval','borda']
     N_REPS = [1]
     election_param_vals = {'election_rules':ELECTION_RULES,
                     'n_reps':N_REPS}

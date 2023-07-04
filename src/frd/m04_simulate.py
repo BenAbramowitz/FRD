@@ -47,11 +47,12 @@ def run_simulation(n_iter, profile_param_vals, election_param_vals, del_voting_p
             prof = profiles.Profile(n_voters, n_cands, n_issues, 
                                     voters_p, cands_p, approval_params)
             
+            # create new instance
             # find profile derivatives needed, and derive only the profiles necessary in profle object (depends on election_param_vals)
             election_rules = election_param_vals.get('election_rules')
-            #print(f'election rules: {election_rules}')
             prof.new_instance(**profiles_needed(election_rules))
-            
+            # print(f'election rules: {election_rules}')
+            # print(vars(prof))
 
             for election_params in helper.params_dict_to_tuples(election_param_vals):
                 # elect reps to get rep_ids and election_scores (if election rule provides them)
