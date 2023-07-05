@@ -35,22 +35,23 @@ def run_simulation(n_iter, profile_param_vals, election_param_vals, del_voting_p
     experiment_params (dict): full dict of experiment params (merged n_iter, profile, election, and del_voting params)
 
 
-    NOTES
+    TODO
     -----
+    Add sanity checks / skip cases if n_reps > n_cands
     
     
     '''
+    data = {} #keys are tuples of all params, values are lists of agreements
     experiment_params = helper.merge_dicts([profile_param_vals, election_param_vals, del_voting_param_vals])
     # experiment_params['n_iter'] = [n_iter]
     param_names = helper.params_dict_to_tuples(experiment_params)[1]
-    data = {} #keys are tuples of all params, values are lists of agreements
     for it in range(n_iter): #PARALLELIZE HERE
         for profile_params in helper.params_dict_to_tuples(profile_param_vals)[0]:
             # print(f'\nprofile params: {profile_params}')
-            (n_voters, n_cands, n_issues, voters_p, cands_p, approval_params) = profile_params
+            (n_voters, n_cands, n_issues, voters_p, cands_p, app_k, app_thresh) = profile_params
 
-            prof = profiles.Profile(n_voters, n_cands, n_issues, 
-                                    voters_p, cands_p, approval_params)
+
+            prof = profiles.Profile(n_voters, n_cands, n_issues, voters_p, cands_p, app_k, app_thresh)
             
             # create new profile instance
             # derive only the election profiles necessary, depending on what rules will be used
@@ -64,6 +65,7 @@ def run_simulation(n_iter, profile_param_vals, election_param_vals, del_voting_p
             for election_params in helper.params_dict_to_tuples(election_param_vals)[0]:
                 # elect reps to get rep_ids and election_scores (if election rule provides scores)
                 election_rule_name, n_reps = election_params
+                if n_reps > n_cands: break #skip nonsenical case where number of reps to elect is greater than number of cands
                 
                 for del_voting_params in helper.params_dict_to_tuples(del_voting_param_vals)[0]:
                     default_style, default_params, delegation_style, delegation_params = del_voting_params
@@ -80,13 +82,16 @@ def run_simulation(n_iter, profile_param_vals, election_param_vals, del_voting_p
                     # if FRD: set default issue-specific weights, update weights by delegation, weighted majority vote
 
     if save == True:
-        #name experiment
+        #name experiment (create file name)
+        #pickle.dump(data, filename, "a")
         pass
 
     if verbose:
-        print(f'data: {data}')
-        print(f'param_names : {param_names}')
+        print('--------------------------')
         print(f'n_iter: {n_iter}')
-        if save == True: print('agreements data saved')
+        print(f'param_names: {param_names}')
+        print(f'experiment_params: {experiment_params}')
+        print(f'data: {data}')
+        if save == True: print('agreements data saved') #add filename
 
-    return data, param_names, n_iter, (profile_param_vals, election_param_vals, del_voting_param_vals)
+    return data, param_names, n_iter, experiment_params
