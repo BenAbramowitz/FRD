@@ -5,8 +5,8 @@ import frd.helper as helper
 import frd.profiles as profiles
 import frd.m02_election_rules as rules
 import frd.m03_delegative_voting as d_voting
-import frd.m04_simulate as simulate
-import frd.m05_save_data as save_data
+import frd.m05_simulate as simulate
+import frd.m04_save_data as save_data
 import frd.m06_analysis as analysis
 
 class Test_m00_helper(unittest.TestCase):
