@@ -2,17 +2,17 @@ import time
 
 import frd.m04_save_data as save_data
 import frd.m05_simulate as simulate
+import frd.m06_analysis as analysis
 
 if __name__ == '__main__':
     start = time.perf_counter()
-    N_ITER = 1000
+    N_ITER = 100
     VERBOSE = False #whether to print info while running simulation
-    SAVE = False #whether to save experiment data automatically before returning
+    SAVE = True #whether to save experiment data automatically before returning
 
-    
     N_VOTERS = [3]
     N_CANDS = [5]
-    N_ISSUES = [10] #Varying number of issues
+    N_ISSUES = [4] #Varying number of issues
     VOTERS_P = [0.5] #Bernoulli p for generating voter issue prefs
     CANDS_P = [0.5] #Bernoulli p for generating cand issue prefs
     APPROVAL_K = [3]
@@ -44,7 +44,7 @@ if __name__ == '__main__':
                         'delegation_style':DELEGATION_STYLE,
                         'delegation_params':DELEGATION_PARAMS}
     
-    data, param_names, n_iter, experiment_params = simulate.run_simulation(N_ITER, profile_param_vals, 
+    data, param_names, n_iter, experiment_params, filename = simulate.run_simulation(N_ITER, profile_param_vals, 
                                                       election_param_vals, 
                                                       del_voting_param_vals, 
                                                       verbose=VERBOSE,
@@ -53,8 +53,14 @@ if __name__ == '__main__':
     end = time.perf_counter()
     print(f'Runtime: {end-start}')
     print(f'Runtime per iter: {(end-start)/N_ITER}')
-    print(f'experiment name: ', save_data.name_experiment(experiment_params))
-    if SAVE: print('Experiment data saved')
+    if SAVE: 
+        print(f'Experiment data saved to: {filename}')
+        data_loaded = save_data.unpickle_data(filename)
+        #print(data_loaded)
+        analysis.get_moments(filename, param_names, save=True)
+    print('-----------------------------')
+
+
 
 
 

@@ -2,6 +2,7 @@ from . import m00_helper as helper
 from . import m01_profiles as profiles
 from . import m02_election_rules as rules
 from . import m03_delegative_voting as d_voting
+from . import m04_save_data as save_data
 
 APPROVAL_RULES = ['max_approval', 'rav']
 ORDINAL_RULES = ['borda', 'plurality'] #stv, chamberlain_courant, k_median, copeland...
@@ -18,7 +19,7 @@ def tuple_to_hashable(tup):
     #Converts a tuple with non-hashable types into a tuple of strings (e.g. to be used as keys in dict)
     return tuple(str(x) for x in tup)
 
-def run_simulation(n_iter, profile_param_vals, election_param_vals, del_voting_param_vals, verbose=False, save=False):
+def run_simulation(n_iter, profile_param_vals, election_param_vals, del_voting_param_vals, verbose=False, save=False, filename=None):
     '''
     PARAMS
     --------
@@ -41,14 +42,14 @@ def run_simulation(n_iter, profile_param_vals, election_param_vals, del_voting_p
     
     
     '''
-    if save == True:
-        raise Exception('Saving simulation to file has not been implemented yet in run_simulation. Simulation will still run and return.')
 
     data = {} #keys are tuples of all params, values are lists of agreements
     experiment_params = helper.merge_dicts([profile_param_vals, election_param_vals, del_voting_param_vals])
     # experiment_params['n_iter'] = [n_iter]
     param_names = helper.params_dict_to_tuples(experiment_params)[1]
     for it in range(n_iter): #PARALLELIZE HERE
+        if verbose and it%100 == 0:
+            print('Iteration: {it}')
         for profile_params in helper.params_dict_to_tuples(profile_param_vals)[0]:
             # print(f'\nprofile params: {profile_params}')
             (n_voters, n_cands, n_issues, voters_p, cands_p, app_k, app_thresh) = profile_params
@@ -84,8 +85,8 @@ def run_simulation(n_iter, profile_param_vals, election_param_vals, del_voting_p
                     # if WRD: set weights (same for all issues), weighted majority vote 
                     # if FRD: set default issue-specific weights, update weights by delegation, weighted majority vote
 
-    if save == True:
-        pass
+    if save:
+        filename = save_data.pickle_data(data, experiment_params, filename=filename)
 
     if verbose:
         print('--------------------------')
@@ -93,6 +94,5 @@ def run_simulation(n_iter, profile_param_vals, election_param_vals, del_voting_p
         print(f'param_names: {param_names}')
         print(f'experiment_params: {experiment_params}')
         print(f'data: {data}')
-        if save == True: print('agreements data saved') #add filename
 
-    return data, param_names, n_iter, experiment_params
+    return data, param_names, n_iter, experiment_params, filename
