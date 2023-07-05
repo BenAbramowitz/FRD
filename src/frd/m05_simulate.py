@@ -41,6 +41,9 @@ def run_simulation(n_iter, profile_param_vals, election_param_vals, del_voting_p
     
     
     '''
+    if save == True:
+        raise Exception('Saving simulation to file has not been implemented yet in run_simulation. Simulation will still run and return.')
+
     data = {} #keys are tuples of all params, values are lists of agreements
     experiment_params = helper.merge_dicts([profile_param_vals, election_param_vals, del_voting_param_vals])
     # experiment_params['n_iter'] = [n_iter]
@@ -82,8 +85,6 @@ def run_simulation(n_iter, profile_param_vals, election_param_vals, del_voting_p
                     # if FRD: set default issue-specific weights, update weights by delegation, weighted majority vote
 
     if save == True:
-        #name experiment (create file name)
-        #pickle.dump(data, filename, "a")
         pass
 
     if verbose:
