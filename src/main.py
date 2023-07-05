@@ -1,26 +1,30 @@
-# import numpy as np
-# import pandas as pd
-# import pickle
+import time
 
-import frd.m00_helper as helper
-import frd.m01_profiles as profiles
-import frd.m02_election_rules as rules
-import frd.m03_delegative_voting as d_voting
-import frd.m04_simulate as simulate
-import frd.m05_save_data as save_data
-import frd.m06_analysis as analysis
+import frd.m04_save_data as save_data
+import frd.m05_simulate as simulate
 
 if __name__ == '__main__':
-    N_ITER = 3
+    start = time.perf_counter()
+    N_ITER = 1000
+    VERBOSE = False #whether to print info while running simulation
+    SAVE = False #whether to save experiment data automatically before returning
 
-    #Set params for creating preference profiles
+    
     N_VOTERS = [3]
-    N_CANDS = [3]
-    N_ISSUES = [4,10] #Varying number of issues
-    VOTERS_P = [0.5]
-    CANDS_P = [0.5]
+    N_CANDS = [5]
+    N_ISSUES = [10] #Varying number of issues
+    VOTERS_P = [0.5] #Bernoulli p for generating voter issue prefs
+    CANDS_P = [0.5] #Bernoulli p for generating cand issue prefs
     APPROVAL_K = [3]
     APPROVAL_THRESH = [0.5]
+    ELECTION_RULES = ['max_approval','borda', 'plurality', 'rav', 'max_agreement']
+    N_REPS = [3]
+    DEFAULT_STYLE = ['uniform']
+    DEFAULT_PARAMS = [None]
+    DELEGATION_STYLE = [None]
+    DELEGATION_PARAMS = [None]
+
+    #Set params for creating preference profiles
     profile_param_vals = {'n_voters':N_VOTERS,
                     'n_cands':N_CANDS,
                     'n_issues':N_ISSUES,
@@ -31,16 +35,10 @@ if __name__ == '__main__':
                     }
     
     #Set params for electing reps
-    ELECTION_RULES = ['max_approval','borda']
-    N_REPS = [1]
     election_param_vals = {'election_rules':ELECTION_RULES,
                     'n_reps':N_REPS}
 
     #Set params for delegative voting
-    DEFAULT_STYLE = ['uniform']
-    DEFAULT_PARAMS = [None]
-    DELEGATION_STYLE = [None]
-    DELEGATION_PARAMS = [None]
     del_voting_param_vals = {'default_style':DEFAULT_STYLE,
                         'default_params':DEFAULT_PARAMS,
                         'delegation_style':DELEGATION_STYLE,
@@ -49,17 +47,15 @@ if __name__ == '__main__':
     data, param_names, n_iter, experiment_params = simulate.run_simulation(N_ITER, profile_param_vals, 
                                                       election_param_vals, 
                                                       del_voting_param_vals, 
-                                                      verbose=True,
-                                                      save=True)
+                                                      verbose=VERBOSE,
+                                                      save=SAVE)
     print('-----------------------------')
-    # print(f'data: {data}')
-    # print(f'param_names: {param_names}')
-    # print(f'experiment_params: {experiment_params}')
-    # filename = save_data.name_dataset(experiment_params)
-    # save_data.save_raw(data, filename, filetype = 'pickle')
-    print('-----------------------------')
-    print(save_data.number_experiment())
-    print(save_data.name_experiment(experiment_params))
+    end = time.perf_counter()
+    print(f'Runtime: {end-start}')
+    print(f'Runtime per iter: {(end-start)/N_ITER}')
+    print(f'experiment name: ', save_data.name_experiment(experiment_params))
+    if SAVE: print('Experiment data saved')
+
 
 
 
