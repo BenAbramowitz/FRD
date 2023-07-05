@@ -5,7 +5,7 @@ import numpy as np
 from . import m00_helper as helper
 
 class Profile():
-    def __init__(self, n_voters:int, n_cands:int, n_issues:int, voters_p, cands_p, approval_params:Tuple[int,float]):
+    def __init__(self, n_voters:int, n_cands:int, n_issues:int, voters_p, cands_p, app_k, app_thresh):
         self.n_voters, self.n_cands = n_voters, n_cands
         self.n_issues = n_issues
         self.voters_p, self.cands_p = voters_p, cands_p
@@ -14,7 +14,7 @@ class Profile():
         self.c_pref:np.ndarray = None #np.empty((n_cands, n_issues))
         
         self.distances = None #np.empty((n_voters, n_cands))
-        self.approval_params = approval_params
+        self.app_k, self.app_thresh = app_k, app_thresh
 
         self.approvals = {} #dict of numpy arrays
         self.approval_indicators = {} #dict of numpy arrays
@@ -73,15 +73,14 @@ class Profile():
         '''
         if self.distances is None:
             self.issues_to_distances()
-        k, threshold = self.approval_params
-        approvable = np.asarray(self.distances < threshold)
+        approvable = np.asarray(self.distances < self.app_thresh)
         for v_id in range(self.n_voters):
-            if np.sum(approvable[v_id]) <= k:
+            if np.sum(approvable[v_id]) <= self.app_k:
                 #self.approval_indicators[v_id] = approvable[v_id]
                 self.approvals[v_id] = np.nonzero(approvable[v_id])[0]
             else: #voter would approve more than k based on threshold if allowed to
                 distances_augmented = helper.array1D_to_sorted(self.distances[v_id], seed=None, tiebreakers=None)
-                self.approvals[v_id] = distances_augmented[:,2][:k].astype(int)
+                self.approvals[v_id] = distances_augmented[:,2][:self.app_k].astype(int)
                 #self.approval_indicators[v_id] = np.asarray([1 if c in self.approvals[v_id] else 0 for c in range(self.n_cands)])
         return self.approvals#, self.approval_indicators
     
@@ -169,7 +168,7 @@ class Profile():
         return self.v_pref, self.c_pref
     
     def set_approval_params(self, k, threshold):
-        self.approval_params = (k, threshold)
+        self.app_k, self.app_thresh = k, threshold
         self.approvals, self.approval_indicators = {}, {} #reset
     
     def set_approvals(self, approvals:dict):
