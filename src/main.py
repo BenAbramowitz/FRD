@@ -19,13 +19,16 @@ if __name__ == '__main__':
     N_ISSUES = [4,10] #Varying number of issues
     VOTERS_P = [0.5]
     CANDS_P = [0.5]
-    APPROVAL_PARAMS = [(N_CANDS, 0.5)]
+    APPROVAL_K = [3]
+    APPROVAL_THRESH = [0.5]
     profile_param_vals = {'n_voters':N_VOTERS,
                     'n_cands':N_CANDS,
                     'n_issues':N_ISSUES,
                     'voters_p':VOTERS_P,
                     'cands_p':CANDS_P,
-                    'approval_params':APPROVAL_PARAMS}
+                    'app_k':APPROVAL_K,
+                    'app_thresh':APPROVAL_THRESH
+                    }
     
     #Set params for electing reps
     ELECTION_RULES = ['max_approval','borda']
@@ -43,19 +46,20 @@ if __name__ == '__main__':
                         'delegation_style':DELEGATION_STYLE,
                         'delegation_params':DELEGATION_PARAMS}
     
-    data, param_names, n_iter, param_vals = simulate.run_simulation(N_ITER, profile_param_vals, 
+    data, param_names, n_iter, experiment_params = simulate.run_simulation(N_ITER, profile_param_vals, 
                                                       election_param_vals, 
                                                       del_voting_param_vals, 
-                                                      verbose=False,
+                                                      verbose=True,
                                                       save=True)
     print('-----------------------------')
-    print(data)
-    print(param_names)
-    print(n_iter)
-    print(param_vals)
-    # print(experiment_params)
+    # print(f'data: {data}')
+    # print(f'param_names: {param_names}')
+    # print(f'experiment_params: {experiment_params}')
     # filename = save_data.name_dataset(experiment_params)
     # save_data.save_raw(data, filename, filetype = 'pickle')
+    print('-----------------------------')
+    print(save_data.number_experiment())
+    print(save_data.name_experiment(experiment_params))
 
 
 
