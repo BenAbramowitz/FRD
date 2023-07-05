@@ -79,9 +79,14 @@ def run_simulation(n_iter, profile_param_vals, election_param_vals, del_voting_p
                     # if WRD: set weights (same for all issues), weighted majority vote 
                     # if FRD: set default issue-specific weights, update weights by delegation, weighted majority vote
 
+    if save == True:
+        #name experiment
+        pass
+
     if verbose:
         print(f'data: {data}')
         print(f'param_names : {param_names}')
         print(f'n_iter: {n_iter}')
+        if save == True: print('agreements data saved')
 
     return data, param_names, n_iter, (profile_param_vals, election_param_vals, del_voting_param_vals)
