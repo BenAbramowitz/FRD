@@ -25,7 +25,7 @@ def number_experiment():
         n = max(int(prefix), n)
     return n+1
 
-def name_experiment(experiment_params:dict):
+def name_experiment(experiment_params:dict, n_iter:int):
     '''
     '''
     n = number_experiment() #get number n of experiment to use as prefix
@@ -70,9 +70,11 @@ def name_experiment(experiment_params:dict):
         else:
             name += '_RD'
 
+    name += '_'+str(n_iter)+'iter'
+
     return name
 
-def pickle_data(data:dict, experiment_params:dict, filename:str = None):
+def pickle_data(data:dict, experiment_params:dict, n_iter:int, filename:str = None):
     '''
     Save experiment data (dict), creating a filename if not given.
 
@@ -86,13 +88,12 @@ def pickle_data(data:dict, experiment_params:dict, filename:str = None):
     '''
 
     if filename is None: 
-        filename = name_experiment(experiment_params)
+        filename = name_experiment(experiment_params, n_iter)
         # print(f'filename created: {filename}')
 
     # data['param_names'] = list(experiment_params.keys())
     with open('./data/'+filename, 'wb') as output_file:
         pickle.dump(data, output_file)
-
     return filename
 
 def unpickle_data(filename):
