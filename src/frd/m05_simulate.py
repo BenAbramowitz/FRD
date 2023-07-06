@@ -35,6 +35,9 @@ def run_simulation(n_iter, profile_param_vals, election_param_vals, del_voting_p
 
     experiment_params (dict): full dict of experiment params (merged n_iter, profile, election, and del_voting params)
     
+    TODO
+    --------
+    Put file saving in a try block in case it fails to save correctly.
     
     '''
 
@@ -80,7 +83,7 @@ def run_simulation(n_iter, profile_param_vals, election_param_vals, del_voting_p
                     # if FRD: set default issue-specific weights, update weights by delegation, weighted majority vote
 
     if save:
-        filename = save_data.pickle_data(data, experiment_params, n_iter, filename=filename)
+        filename = save_data.pickle_data(data, experiment_params, filename=filename)
 
     if verbose:
         print('--------------------------')

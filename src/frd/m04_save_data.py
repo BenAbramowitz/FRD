@@ -74,7 +74,7 @@ def name_experiment(experiment_params:dict, n_iter:int):
 
     return name
 
-def pickle_data(data:dict, experiment_params:dict, n_iter:int, filename:str = None):
+def pickle_data(data:dict, experiment_params:dict=None, filename:str = None):
     '''
     Save experiment data (dict), creating a filename if not given.
 
@@ -82,10 +82,12 @@ def pickle_data(data:dict, experiment_params:dict, n_iter:int, filename:str = No
     --------
     Currently, if a file exists this will overwrite the contents of that file.
 
-    TO DO
+    TODO
     -------
     If filename already exists, then append the data
     '''
+
+    n_iter = len(next(iter(data.values())))
 
     if filename is None: 
         filename = name_experiment(experiment_params, n_iter)
