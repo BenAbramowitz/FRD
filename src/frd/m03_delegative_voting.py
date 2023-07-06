@@ -90,7 +90,10 @@ class RD():
     def elect_reps(self):
         if self.election_rule is None:
             raise ValueError('Election rule is currently None (not set yet), func elect_reps cannot elect reps')
-        self.rep_ids, self.cand_election_scores = self.election_rule(self.profile, self.n_reps)
+        elif self.election_rule == rules.random_winners:
+            self.rep_ids, self.cand_election_scores = self.election_rule(range(self.profile.get_n_cands()), self.n_reps)
+        else:
+            self.rep_ids, self.cand_election_scores = self.election_rule(self.profile, self.n_reps)
         return self.rep_ids, self.cand_election_scores, self.rep_prefs
     
     def pull_rep_prefs(self):
