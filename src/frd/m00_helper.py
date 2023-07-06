@@ -100,3 +100,12 @@ def merge_dicts(list_of_dicts:list):
     for d2 in list_of_dicts:
         d.update(d2)
     return d
+
+def get_file_prefix(f)->str:
+    prefix = ""
+    for char in f:
+        if char.isdigit():
+            prefix += char
+        else:
+            break
+    return prefix #str
