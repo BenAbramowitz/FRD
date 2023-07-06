@@ -88,7 +88,7 @@ def borda(profile:profiles.Profile, n_winners:int, seed=None):
 #     return winners
 
 def max_approval(profile, n_winners, seed=None):
-    approval_indicators = list(vars(profile)['approval_indicators'].values())
+    approval_indicators = list(profile.get_approval_indicators().values())
     #print(f'\n\napprovals_indicators: {approval_indicators}')
     approval_counts = np.sum(np.vstack(approval_indicators), axis=0)
     # print(f'approval counts: {approval_counts}')
@@ -96,9 +96,9 @@ def max_approval(profile, n_winners, seed=None):
     return winners, approval_counts
 
 def rav(profile, n_winners):
-    n_cands = vars(profile)['n_cands']
+    n_cands = profile.get_n_cands()
     candidates = list(range(n_cands))
-    approvals = vars(profile)['approvals']
+    approvals = profile.get_approvals()
     result = []
     # approvals = {v_id:v_pref for v_id, v_pref in enumerate(approvals)}
     while len(result) < n_winners:
@@ -114,11 +114,7 @@ def rav(profile, n_winners):
         # choose the highest score...
         #print(c_scores)
         order = [k for k in sorted(c_scores, key=c_scores.get, reverse=True)]
-        
-        tiebreakers = helper.create_tiebreakers(len(order), dtype=int)
-        array_augmented = np.column_stack((order, tiebreakers))
-        order_tiebroken = np.lexsort((array_augmented[:, 1], array_augmented[:, 0]))
-        result.append(order_tiebroken[0])
+        result.append(order[0])
     return result, max_approval(profile, n_winners)[1] #election scores are approval counts
 
 def max_agreement(profile, n_winners, seed=None):

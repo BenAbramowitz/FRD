@@ -196,6 +196,9 @@ class Profile():
 
     def get_approvals(self):
         return self.approvals
+    
+    def get_approval_indicators(self):
+        return self.approval_indicators
 
     def get_orders(self):
         return self.orders
