@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 import os
-from os.path import join
+# from os.path import join
 # import pickle
 from scipy import stats
 
@@ -26,5 +26,6 @@ def get_moments(filename, param_names, save=True):
     analyzed = [list(params) + four_moments(agreements) for params, agreements in data.items()]
     df = pd.DataFrame(analyzed, columns = param_names+['mean','variance','skew','kurtosis'])
     if save == True: 
-        filename += '_moments.csv'
+        filename = filename[0:3]+'_moments.csv'
         df.to_csv(os.path.join(path, filename))
+    return df
