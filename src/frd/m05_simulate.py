@@ -34,18 +34,12 @@ def run_simulation(n_iter, profile_param_vals, election_param_vals, del_voting_p
     data (dict): dict keys are tuples of param values, dict values are lists of agreements of length n_iter
 
     experiment_params (dict): full dict of experiment params (merged n_iter, profile, election, and del_voting params)
-
-
-    TODO
-    -----
-    Add sanity checks / skip cases if n_reps > n_cands
     
     
     '''
 
     data = {} #keys are tuples of all params, values are lists of agreements
     experiment_params = helper.merge_dicts([profile_param_vals, election_param_vals, del_voting_param_vals])
-    # experiment_params['n_iter'] = [n_iter]
     param_names = helper.params_dict_to_tuples(experiment_params)[1]
     for it in range(n_iter): #PARALLELIZE HERE
         if verbose and it%100 == 0:
@@ -86,7 +80,7 @@ def run_simulation(n_iter, profile_param_vals, election_param_vals, del_voting_p
                     # if FRD: set default issue-specific weights, update weights by delegation, weighted majority vote
 
     if save:
-        filename = save_data.pickle_data(data, experiment_params, filename=filename)
+        filename = save_data.pickle_data(data, experiment_params, n_iter, filename=filename)
 
     if verbose:
         print('--------------------------')
