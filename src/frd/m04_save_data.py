@@ -6,7 +6,7 @@ import pandas as pd
 import pickle
 import numpy as np
 
-def number_experiment():
+def number_experiment()->int:
     '''
     read in all the files in data folder prefixed by a number, and find the largest (or 0 if empty), then add one.
     The goal is to give all experiments a unique ID. Assuming < 1000 experiments.
@@ -25,8 +25,9 @@ def number_experiment():
         n = max(int(prefix), n)
     return n+1
 
-def name_experiment(experiment_params:dict, n_iter:int):
+def name_experiment(experiment_params:dict, n_iter:int)->str:
     '''
+    Get numeric prefix, then append param vals to create informative identifier for the experiment
     '''
     n = number_experiment() #get number n of experiment to use as prefix
     if n < 10: name = '00'+str(n)
@@ -74,17 +75,23 @@ def name_experiment(experiment_params:dict, n_iter:int):
 
     return name
 
-def pickle_data(data:dict, experiment_params:dict=None, filename:str = None):
+def pickle_data(data:dict, experiment_params:dict=None, filename:str = None)->str:
     '''
-    Save experiment data (dict), creating a filename if not given.
+    Save experiment data (dict), creating a filename from experiment_params if not given.
+
+    PARAMS
+    ------
+    data (dict): keys are tuples of param values, values are lists of agreement values of length n_iter. This is experiment output to be written to file.
+    **experiment_params (dict): keys are param names (str), values are lists. This was input to the experiment. Used to name file if filename not given.
+    **filename (str): Name of file to write data to
+
+    RETURNS
+    -------
+    filename (str): Name of file where data was written.
 
     NOTES
     --------
-    Currently, if a file exists this will overwrite the contents of that file.
-
-    TODO
-    -------
-    If filename already exists, then append the data
+    If a file exists pickel.dump() will overwrite the contents of that file.
     '''
 
     n_iter = len(next(iter(data.values())))
@@ -98,7 +105,7 @@ def pickle_data(data:dict, experiment_params:dict=None, filename:str = None):
         pickle.dump(data, output_file)
     return filename
 
-def unpickle_data(filename):
+def unpickle_data(filename)->dict:
     with open('./data/'+filename, 'rb') as input_file:
         data = pickle.load(input_file)
     return data

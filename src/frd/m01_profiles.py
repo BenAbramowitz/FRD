@@ -14,7 +14,8 @@ class Profile():
         self.c_pref:np.ndarray = None #np.empty((n_cands, n_issues))
         
         self.distances = None #np.empty((n_voters, n_cands))
-        self.app_k, self.app_thresh = app_k, app_thresh
+        self.app_k:int = app_k #voters can approve at most app_k cands
+        self.app_thresh:float = app_thresh #voters only approve of cand if dist between them is strictly below app_thresh
 
         self.approvals = {} #dict of numpy arrays
         self.approval_indicators = {} #dict of numpy arrays
@@ -24,13 +25,30 @@ class Profile():
 
         self.voter_majority_outcomes = None
 
-    def create_issue_prefs(self):
+    def create_issue_prefs(self)->Tuple[np.ndarray, np.ndarray]:
+        '''
+        Create voter and cand prefs over issues and reset any values that were derived from voter/cands prefs 
+        (e.g. distances, voter majority, and election profiles)
+
+        RETURNS
+        -------
+        v_pref (np.ndarray)(n_voters x n_issues): 2D binary numpy array of voter prefs over issues drawn from Bernoulli with param voters_p
+        c_pref (np.ndarray)(n_cands x n_issues): 2D binary numpy array of cand prefs over issues drawn from Bernoulli with param cands_p
+
+        NOTES
+        -------
+        Since a single profile object may be used many times instead of creating a new profile in each instance, this method can be used to generate new issue prefs
+        with the same parameters, and resets any values based on the issue prefs to prevent mismatch
+        '''
         self.v_pref = np.random.binomial(1, self.voters_p, size=(self.n_voters, self.n_issues))
         self.c_pref = np.random.binomial(1, self.cands_p, size=(self.n_cands, self.n_issues))
         self.reset_derivatives()
         return self.v_pref, self.c_pref
     
-    def reset_derivatives(self):
+    def reset_derivatives(self)->None:
+        '''
+        Reset all voters derived from issue prefs to be empty/None
+        '''
         self.distances = None #np.empty((n_voters, n_cands))
         self.approvals = {} #dict of numpy arrays
         self.approval_indicators = {} #dict of numpy arrays
@@ -39,7 +57,11 @@ class Profile():
         self.agreements = {} #dict of numpy arrays
         self.voter_majority_outcomes = None #numpy array of len n_issues
     
-    def voter_majority_vote(self):
+    def voter_majority_vote(self)->np.ndarray:
+        '''
+        Compute the (unweighted) voter majority on every issue with random tiebreaking
+        Tiebreaking only occurs if n_voters is even
+        '''
         self.voter_majority_outcomes = np.random.binomial(1, 0.5, size=(self.n_issues)) #initialized randomly so unchanged vals break ties randomly
         for i in range(self.n_issues):
             ones = np.sum(self.v_pref[:,i], axis=0)
@@ -49,7 +71,16 @@ class Profile():
                 self.voter_majority_outcomes[i] = 0
         return self.voter_majority_outcomes
         
-    def issues_to_distances(self):
+    def issues_to_distances(self)->np.ndarray:
+        '''
+        Compute normalized pairwise Hamming distances between every voter-cand pair based on their issue prefs
+        Distance of 0 means cand and voter have identical prefs over issues, 1 means exact opposite
+        Distance is equal to the fraction of issues the voter and cand disagree on
+
+        RETURNS
+        -------
+        distances (np.ndarray): 2D numpy array, size n_voters x n_cands containing floats in [0.0,1.0]
+        '''
         hamming_distances = np.sum(self.v_pref[:, None] != self.c_pref, axis=2)
         self.distances = hamming_distances / self.n_issues
         return self.distances
@@ -58,6 +89,7 @@ class Profile():
         '''
         Voters report approvals of cands based on distances between their prefs
         Voters will approve only if distance is below a threshold, and a voter can approve at most k cands
+        If more than k cands have distances below the threshold, then the voter approves of those with lowest distances, breaking ties randomly
 
         RETURNS
         -----
@@ -67,9 +99,10 @@ class Profile():
 
         NOTES
         -----
-        self.derivation_params must be a tuple (k, threshold)
-        If threshold is 1.0, then voter will approve exactly k cands
+        If threshold is 1.0, then voter will approve exactly k cands.
         If k >= n_cands, voter will approve all cands whose distance from them is below the threshold
+        If threshold = 0 or k = 0, voter will not approve any cands
+
         '''
         if self.distances is None:
             self.issues_to_distances()
@@ -84,15 +117,14 @@ class Profile():
                 #self.approval_indicators[v_id] = np.asarray([1 if c in self.approvals[v_id] else 0 for c in range(self.n_cands)])
         return self.approvals#, self.approval_indicators
     
-    def approvals_to_indicators(self):
+    def approvals_to_indicators(self)->dict:
+        '''
+        Takes voters' approvals, which are arrays of integer cand ids, and turns them into indicator arrays where 1 at index means they approve cand with index=cand id
+        '''
         if self.approvals == {}:
             self.distances_to_approvals()
         self.approval_indicators = {v_id:helper.subset_to_indicator(self.approvals[v_id], range(self.n_cands)) for v_id in range(self.n_voters)}
-
-    def distances_to_ordinals(self)->Tuple[dict, dict]:
-        if self.distances is None:
-            self.issues_to_distances()
-        return self.distances_to_orders(), self.orders_to_ordermaps()
+        return self.approval_indicators
     
     def distances_to_orders(self)->dict:
         '''
@@ -100,7 +132,8 @@ class Profile():
 
         RETURNS
         -----
-        self.orders (dict of 1D np.ndarrays): keys are voter ids, values are ordered lsit of cand ids
+        self.orders (dict of 1D np.ndarrays): keys are voter ids, each value is ordered list of cand ids of len n_cands
+        self.ordermaps[v][3] = c means voter v ranks cand c in 4th place
         '''
         if self.distances is None:
             self.issues_to_distances()
@@ -111,8 +144,8 @@ class Profile():
         '''
         RETURNS
         -------
-        self.ordermaps (dict of 1D numpy arrays): keys are voters, values are lists of indices
-        self.ordermaps[v][c] = 3 means voter v ranks cand v third
+        self.ordermaps (dict of 1D numpy arrays): keys are voters, values are lists of indices of len n_cands
+        self.ordermaps[v][c] = 3 means voter v ranks cand c in 4th place
 
         NOTES
         ------
@@ -144,12 +177,13 @@ class Profile():
         self.issues_to_distances()
         self.voter_majority_vote()
         if approvals: 
-            self.distances_to_approvals()
-            self.approvals_to_indicators()
+            self.distances_to_approvals() #used for max_approval
+            self.approvals_to_indicators() #used for rav
         if ordinals:
-            self.distances_to_ordinals()
+            self.distances_to_orders() #used for scoring rules, e.g. Borda and Plurality
+            self.orders_to_ordermaps()
         if agreements:
-            self.distances_to_agreements()
+            self.distances_to_agreements() #used for max_agreement
         return vars(self)
 
 
