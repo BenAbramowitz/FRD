@@ -56,7 +56,7 @@ def name_experiment(experiment_params:dict, n_iter:int)->str:
     else: name += '_'+str(int(experiment_params['app_thresh'][0]*100))+'APPT'
 
     if len(experiment_params['election_rules']) > 1: name += '_varyR'
-    else: name += '_'+experiment_params['election_rules']
+    else: name += '_'+experiment_params['election_rules'][0]
 
     if len(experiment_params['n_reps']) > 1: name += '_varyCS'
     else: name += '_'+str(experiment_params['n_reps'][0])+'CS'
