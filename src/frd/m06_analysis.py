@@ -9,7 +9,9 @@ from scipy import stats
 import frd.m04_save_data as save_data
 
 def four_moments(array):
-    '''given data dict, get the mean and variance for each run. Write results to csv file.'''
+    '''
+    Given data dict, return the mean, variance, skew, and kurtosis for ethe agreements data for each parameterization.
+    '''
     mean = np.mean(array)
     variance = np.var(array)
     skew = stats.skew(array)
@@ -19,6 +21,10 @@ def four_moments(array):
 def get_moments(filename, param_names, save=True):
     '''
     Load data from file, compute moments for each parameterization in that experiment, then save analysis as csv
+
+    RETURNS
+    -------
+    df (pd.DataFrame): has col for each parameter val and columns for mean, variance, skew, and kurtosis of the agreements data, row for each parameterization
     '''
     data = save_data.unpickle_data(filename)
     path = Path("./data")
