@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
+import numpy as np
 from pathlib import Path
 from os import listdir
 from os.path import isfile, join
@@ -12,18 +13,29 @@ from . import m00_helper as helper
 #pandas has good plotting tools, so might just use that for everything
 #generalize to allow any l_var instead of just rules
 
-def check_csv(filename):
-    if not filename.endswith('.csv'):
-        raise ValueError('compare_rules can only read in csv files to plot')
+def check_filetype(filename, filetype='csv'):
+    if not filename.endswith(filetype):
+        raise ValueError(f'File {filename} is not of correct type. Need {filetype}')
+    
+def var_to_title(s):
+    s = s.replace('_', ' ')
+    return s.title()
+
 
 def label_compare_rules_plot(filename, x_var, y_var):
+    '''
+    
+    TO DO
+    -------
+    Format legend values
+    
+    '''
     prefix = helper.get_file_prefix(filename)
     path = Path("./data")
-    datafile = str([f for f in listdir(path) if isfile(join(path, f)) and f[0:3] == prefix and 'moments' not in f])
+    datafile = str([f for f in listdir(path) if isfile(join(path, f)) and f[0:3] == prefix and 'RD' in f and 'moments' not in f])
 
     title = ""
     x_label, y_label = "", ""
-    print(f'datafile: {datafile}')
     if "FRD" in datafile:
         title = "FRD: "
     elif "RD" in datafile:
@@ -79,7 +91,9 @@ def compare_rules(filename, x_var:str, y_var='mean', save=True, show=False, data
 
     TODO
     ----------
-    Change labels of election rules in the legend to title chase
+    Change labels of election rules in the legend to title case. 
+    For some reason doing this changes the legend keys incorrectly so the colors next to the vals don't match the plot.
+    Attempt to change using p.legend(...labels=...) is commented out
 
     NOTES
     ------
@@ -87,17 +101,19 @@ def compare_rules(filename, x_var:str, y_var='mean', save=True, show=False, data
     If plot exists with the same name it will get overwritten
 
     '''
-    check_csv(filename)
+    check_filetype(filename, 'csv')
     df = pd.read_csv(data_dir+filename)
-    #Need to change title and axis labels
     p = sns.lineplot(data=df, x=x_var, y=y_var, hue='election_rules')
     title, xlabel, ylabel = label_compare_rules_plot(filename, x_var, y_var)
-    p.legend(title='Election Rules')
+    # rules = df['election_rules'].drop_duplicates()
+    # legend_keys = list(map(var_to_title, rules))
+    if y_var == 'mean': p.set_yticks(np.arange(0,101,10)/100)
+    p.legend(title='Election Rules')#,labels=legend_keys)
 
     p.set(title=title, xlabel=xlabel, ylabel=ylabel)
     if save:
         prefix = helper.get_file_prefix(filename)
         fig = p.get_figure()
-        fig.savefig('./plots/'+prefix+'_rules_vs_'+x_var)
+        fig.savefig('./plots/'+prefix+'_compare_rules_'+y_var+'_vs_'+x_var)
     if show:
         plt.show()
