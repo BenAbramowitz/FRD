@@ -1,2 +1,15 @@
 
 src/playground.py
+*.pyc
+src/frd/__pycache__/__init__.cpython-39.pyc
+src/frd/__pycache__/m00_helper.cpython-39.pyc
+src/frd/__pycache__/m01_profiles.cpython-39.pyc
+src/frd/__pycache__/m02_election_rules.cpython-39.pyc
+src/frd/__pycache__/m03_delegative_voting.cpython-39.pyc
+src/frd/__pycache__/m04_save_data.cpython-39.pyc
+src/frd/__pycache__/m04_simulate.cpython-39.pyc
+src/frd/__pycache__/m05_analysis.cpython-39.pyc
+src/frd/__pycache__/m05_save_data.cpython-39.pyc
+src/frd/__pycache__/m06_analysis.cpython-39.pyc
+*.pyc
+.DS_Store
