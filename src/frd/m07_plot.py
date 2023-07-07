@@ -103,6 +103,8 @@ def compare_rules(filename, x_var:str, y_var='mean', save=True, show=False, data
     '''
     check_filetype(filename, 'csv')
     df = pd.read_csv(data_dir+filename)
+    df['election_rules'] = df['election_rules'].apply(lambda x: var_to_title(x))
+
     p = sns.lineplot(data=df, x=x_var, y=y_var, hue='election_rules')
     title, xlabel, ylabel = label_compare_rules_plot(filename, x_var, y_var)
     # rules = df['election_rules'].drop_duplicates()
