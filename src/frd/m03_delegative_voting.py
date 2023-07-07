@@ -57,20 +57,19 @@ class RD():
     '''
     Elect reps, assign defautl weights, take (weighted) majority vote, then compare to voter majority
     '''
-    def __init__(self, profile:profiles.Profile=None, election_rule:str=None, n_reps:int=None, default='uniform', default_params=None) -> None:
+    def __init__(self, profile:profiles.Profile=None, election_rule:str=None, n_reps:int=None, default='uniform') -> None:
         self.profile = profile
         if election_rule is not None:
             self.election_rule = rules.rule_dispatcher(election_rule)
         else:
             self.election_rule = None
         self.n_reps = n_reps
-        self.default, self.default_params = default, default_params
+        self.default = default
 
         self.voter_majority_outcomes = profile.get_voter_majority()
 
         self.rep_ids = []
         self.rep_prefs = None
-        self.rep_weights = None
         self.cand_election_scores = None
     
     ###
@@ -116,8 +115,8 @@ class RD():
             rep_outcomes = majority(self.rep_prefs)
         elif self.default == 'election_scores':
             #Give reps their election scores and all other cands zero, then thake weighted_majority vote
-            self.rep_weights = [self.cand_election_scores[c] if c in self.rep_ids else 0 for c in range(self.profile.get_n_cands())]
-            rep_outcomes = weighted_majority(self.rep_prefs, self.rep_weights)
+            rep_weights = [self.cand_election_scores[c] if c in self.rep_ids else 0 for c in range(self.profile.get_n_cands())]
+            rep_outcomes = weighted_majority(self.rep_prefs, rep_weights)
         elif self.default == 'borda_scores':
             raise ValueError(f'Default weighting not implemented: {self.default}')
         elif self.default == 'approval_counts':
@@ -152,9 +151,6 @@ class RD():
     def set_default(self, default):
         self.default = default
 
-    def set_default_params(self, default_params):
-        self.default_params = default_params
-
     ### Getters
 
     def get_election_rule(self):
@@ -168,15 +164,16 @@ class RD():
 
     def get_default(self):
         return self.default
-
-    def get_default_params(self):
-        return self.default_params
     
 
 class WRD(RD):
     '''
     Allows delegation only once after election, so weights of reps are constant across all issues
     '''
+    def __init__(self, profile:profiles.Profile, election_rule, n_reps, delegation_style:str, delegation_params, default='uniform') -> None:
+        super().__init__(profile, election_rule, n_reps, default)
+        self.delegation_style = delegation_style
+        self.delegation_params = delegation_params
     pass
 
 class FRD(RD):
@@ -193,7 +190,7 @@ class FRD(RD):
     The easiest way to implement this sems to be a 3D numpy array (n_voters x n_cands x n_issues).
     '''
     def __init__(self, profile:profiles.Profile, election_rule, n_reps, delegation_style:str, delegation_params, default='uniform') -> None:
-        super().__init__(profile, election_rule, n_reps, default)
+        super().__init__(profile, election_rule, n_reps, default, default_params)
         self.default_style = delegation_style
         self.delegation_params = delegation_params
 
