@@ -13,3 +13,8 @@ src/frd/__pycache__/m05_save_data.cpython-39.pyc
 src/frd/__pycache__/m06_analysis.cpython-39.pyc
 *.pyc
 .DS_Store
+src/frd/__pycache__/__init__.cpython-39.pyc
+src/frd/__pycache__/__init__.cpython-39.pyc
+src/frd/__pycache__/m00_helper.cpython-39.pyc
+src/frd/__pycache__/m01_profiles.cpython-39.pyc
+*.pyc
