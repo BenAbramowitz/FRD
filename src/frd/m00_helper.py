@@ -158,3 +158,10 @@ def get_file_prefix(f)->str:
         else:
             break
     return prefix
+
+def vals_to_list(d):
+    '''
+    Takes in a dictionary and changes all values to lists that are not already lists
+    '''
+    d = {k:v if type(v) is list else [v] for k,v in d.items()}
+    return d
