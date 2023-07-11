@@ -1,4 +1,5 @@
 import numpy as np
+import copy
 
 from . import m00_helper as helper
 from . import m01_profiles as profiles
@@ -46,7 +47,6 @@ def weighted_majority(binary_matrix:np.ndarray, weights, verbose=False)->np.ndar
         print(f'n_issues: {n_issues}')
         print(f'issues_profile: {binary_matrix}')
         print(f'weights: {weights}')
-        print(f'n_issues: {n_issues}')
         print(f'weighted_profile: {weighted_profile}')
         print(f'vote_sums: {vote_sums}')
         print(f'weight_sum: {weight_sum}')
@@ -55,25 +55,19 @@ def weighted_majority(binary_matrix:np.ndarray, weights, verbose=False)->np.ndar
 
 class RD():
     '''
-    Elect reps, assign defautl weights, take (weighted) majority vote, then compare to voter majority
+    Elect reps, apply default weighting, take (weighted) majority vote, then compare to voter majority outcomes
     '''
-    def __init__(self, profile:profiles.Profile=None, election_rule:str=None, n_reps:int=None, default='uniform') -> None:
+    def __init__(self, profile:profiles.Profile, election_rule:str, n_reps:int, default:str) -> None:
         self.profile = profile
-        if election_rule is not None:
-            self.election_rule = rules.rule_dispatcher(election_rule)
-        else:
-            self.election_rule = None
+        self.election_rule = rules.rule_dispatcher(election_rule)
         self.n_reps = n_reps
-        self.default = default
-
-        self.voter_majority_outcomes = profile.get_voter_majority()
-
         self.rep_ids = []
+        self.delegator_ids = []
         self.rep_prefs = None
+        self.default = default
         self.cand_election_scores = None
+        self.voter_majority_outcomes = profile.get_voter_majority()
     
-    ###
-
     def voter_majority_vote(self):
         self.voter_majority_outcomes = self.profile.get_voter_majority()
         return self.voter_majority_outcomes
@@ -87,10 +81,9 @@ class RD():
         rep_ids (list, 1D): The integer ids of cands who get elected
         cand_election_scores (np.ndarray, 1D): The scores assigned to all cands during the election process (can be used as default weighting by RD/FRD)
         rep_prefs (np.ndarray, 2D): 
-
         '''
         if self.election_rule is None:
-            raise ValueError('Election rule is currently None (not set yet), func elect_reps cannot elect reps')
+            raise ValueError('Election rule is currently None, func elect_reps cannot elect reps')
         elif self.election_rule == rules.random_winners:
             self.rep_ids, self.cand_election_scores = self.election_rule(range(self.profile.get_n_cands()), self.n_reps)
         else:
@@ -104,7 +97,7 @@ class RD():
         c_prefs = self.profile.get_issue_prefs()[1]
         self.rep_prefs = c_prefs[self.rep_ids,:]
         return self.rep_prefs
-    
+
     def outcome_agreement(self)->float:
         '''
         Apply the default weighting (param), then run weighted majority voting on rep prefs (not cand prefs).
@@ -114,13 +107,9 @@ class RD():
         if self.default == 'uniform':
             rep_outcomes = majority(self.rep_prefs)
         elif self.default == 'election_scores':
-            #Give reps their election scores and all other cands zero, then thake weighted_majority vote
-            rep_weights = [self.cand_election_scores[c] if c in self.rep_ids else 0 for c in range(self.profile.get_n_cands())]
-            rep_outcomes = weighted_majority(self.rep_prefs, rep_weights)
-        elif self.default == 'borda_scores':
-            raise ValueError(f'Default weighting not implemented: {self.default}')
-        elif self.default == 'approval_counts':
-            raise ValueError(f'Default weighting not implemented: {self.default}')
+                #Give reps their election scores and all other cands zero, then take weighted_majority vote
+                rep_weights = [self.cand_election_scores[c] if c in self.rep_ids else 0 for c in range(self.profile.get_n_cands())]
+                rep_outcomes = weighted_majority(self.rep_prefs, rep_weights)
         else:
             raise ValueError(f'Default weighting not implemented: {self.default}')
 
@@ -132,10 +121,6 @@ class RD():
         self.pull_rep_prefs()
         self.voter_majority_vote()
         return self.outcome_agreement()
-    
-    # def new_instance(self):
-    #     self.profile.new_instance()
-    #     self.run_RD()
 
     ### Setters
 
@@ -163,45 +148,69 @@ class RD():
         return self.n_reps
 
     def get_default(self):
-        return self.default
-    
+        return self.defaul
 
-class WRD(RD):
-    '''
-    Allows delegation only once after election, so weights of reps are constant across all issues
-    '''
-    def __init__(self, profile:profiles.Profile, election_rule, n_reps, delegation_style:str, delegation_params, default='uniform') -> None:
-        super().__init__(profile, election_rule, n_reps, default)
-        self.delegation_style = delegation_style
-        self.delegation_params = delegation_params
-    pass
 
-class FRD(RD):
+
+class FRD():
     '''
 
-    INHERITED METHODS
-    -----------------
-    same: voter_majority_vote, elect_reps, pull_rep_prefs
-    overwritten: outcome_agreement
-
-    NOTES
-    ------
-    The main differences between FRD and its parent class RD are that in FRD the weights are issue-specific, so voters can alter the weight of the reps on each issue individually.
-    The easiest way to implement this sems to be a 3D numpy array (n_voters x n_cands x n_issues).
     '''
-    def __init__(self, profile:profiles.Profile, election_rule, n_reps, delegation_style:str, delegation_params, default='uniform') -> None:
-        super().__init__(profile, election_rule, n_reps, default, default_params)
-        self.default_style = delegation_style
-        self.delegation_params = delegation_params
+    def __init__(self, profile:profiles.Profile, election_rule, n_reps, delegation_style:str, delegation_params:dict, default='uniform') -> None:
+        self.profile = profile
+        self.n_voters, self.n_cands = profile.get_n_voters(), profile.get_n_cands
+        self.n_issues = profile.get_n_issues()
+        self.election_rule = rules.rule_dispatcher(election_rule)
+        self.n_reps = n_reps
+        self.rep_ids = []
+        self.weighting = {i:np.zeros(self.n_voters, self.n_cands) for i in range(self.n_issues)}
+
+    def elect_reps(self):
+        if self.election_rule == rules.random_winners:
+            self.rep_ids, self.cand_election_scores = self.election_rule(range(self.profile.get_n_cands()), self.n_reps)
+        else:
+            self.rep_ids, self.cand_election_scores = self.election_rule(self.profile, self.n_reps)
+        return self.rep_ids, self.cand_election_scores
+
+    def pull_rep_prefs(self):
+        c_prefs = self.profile.get_issue_prefs()[1]
+        self.rep_prefs = c_prefs[self.rep_ids,:]
+        return self.rep_prefs
 
     def default_weights(self):
-        '''Set default issue-specific weight of each rep for every issue'''
-        pass
+        '''Set default weight given by each voter to each rep on each issue'''
+        if self.default == 'uniform':
+            for i in range(self.n_issues):
+                for v in range(self.n_voters):
+                    self.weighting[i][v] = [1 if c in self.n_reps else 0 for c in range(self.n_cands)]/self.n_reps
+        else:
+            raise ValueError(f'Default {self.default} not implemented for FRD')
 
-    def determine_delegators(self):
-        pass
+    def select_n_delegators(self):
+        '''
+        Select n random delegators to be the ones who delegate on every issue.
+        
+        NOTE
+        ----
+        Assumes it is the same n voters delegating on every issue.
+        '''
+        self.delegator_ids = np.choice(self.n_voters, self.delegation_params['n_delegators'])
+        return self.delegator_ids
 
     def incisive_delegation(self):
+        v_prefs, c_prefs = self.profile.get_issue_prefs()
+        for i in range(self.n_issues):
+            for v in self.delegator_ids:
+                for r in self.rep_ids:
+                    if c_prefs[r,i] == v_prefs[v,i]:
+                        self.weighting[i][v] = np.zeros(self.n_cands)
+                        self.weighting[i][v,r] = 1
+                        break
+        return self.weighting
+    
+    def best_k_delegation(self):
+        #for each voter, determine their top k reps
+        #use the top k reps to create delegations for 
         pass
 
     def outcome_agreement(self):
