@@ -1,3 +1,4 @@
+import multiprocessing as mp
 from multiprocessing import Pool
 
 from . import m00_helper as helper
@@ -44,12 +45,10 @@ def single_iter(profile_param_vals:tuple, election_param_vals:dict, del_voting_p
                 if delegation_style is None: #RD
                     rd = d_voting.RD(prof, election_rule_name, n_reps, default=default_style)
                     agreement = rd.run_RD()
-                    data[tuple_to_hashable(profile_params+election_params+del_voting_params)] = [agreement]
-                else: #WRD/FRD
-                    raise ValueError('Other weighting/delegating schemes not implemented yet in run_simulation')
-                # if WRD: set weights (same for all issues), weighted majority vote 
-                # if FRD: set default issue-specific weights, update weights by delegation, weighted majority vote
-
+                else: #FRD
+                    frd = d_voting.FRD(prof, election_rule_name, n_reps, delegation_style, delegation_params, default='uniform')
+                    agreement = frd.run_FRD()
+                data[tuple_to_hashable(profile_params+election_params+del_voting_params)] = [agreement]
     return data
 
 def single_iter_unpacker(args):
@@ -57,7 +56,7 @@ def single_iter_unpacker(args):
 
 def sim_parallel(n_iter:int, profile_param_vals:dict, election_param_vals:dict, del_voting_param_vals:dict, save:bool=True):
     data = {}
-    with Pool() as pool:
+    with Pool(mp.cpu_count()-1) as pool:
         for iter_data in pool.imap_unordered(single_iter_unpacker, [[profile_param_vals, election_param_vals, del_voting_param_vals]]*n_iter):
             helper.append_dict_values(data, iter_data)
     if save:
