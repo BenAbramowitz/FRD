@@ -75,7 +75,7 @@ def name_experiment(experiment_params:dict, n_iter:int)->str:
 
     return name
 
-def pickle_data(data:dict, experiment_params:dict=None, filename:str = None)->str:
+def pickle_data(data:dict, experiment_params:dict=None, experiment_name:str = None)->str:
     '''
     Save experiment data (dict), creating a filename from experiment_params if not given.
 
@@ -96,14 +96,14 @@ def pickle_data(data:dict, experiment_params:dict=None, filename:str = None)->st
 
     n_iter = len(list(data.values())[0])
 
-    if filename is None: 
-        filename = name_experiment(experiment_params, n_iter)
+    if experiment_name is None: 
+        experiment_name = name_experiment(experiment_params, n_iter)
         # print(f'filename created: {filename}')
 
     # data['param_names'] = list(experiment_params.keys())
-    with open('./data/'+filename, 'wb') as output_file:
+    with open('./data/'+experiment_name+'_data', 'wb') as output_file:
         pickle.dump(data, output_file)
-    return filename
+    return experiment_name+'_data'
 
 def unpickle_data(filename)->dict:
     with open('./data/'+filename, 'rb') as input_file:

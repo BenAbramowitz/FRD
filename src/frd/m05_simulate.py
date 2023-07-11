@@ -39,6 +39,8 @@ def single_iter(profile_param_vals:tuple, election_param_vals:dict, del_voting_p
             # elect reps to get rep_ids and election_scores (if election rule provides scores)
             election_rule_name, n_reps = election_params
             if n_reps > n_cands: break #skip nonsenical case where number of reps to elect is greater than number of cands
+            #print('election rule:', election_rule_name)
+            #print('n_reps:', n_reps)
             
             for del_voting_params in helper.params_dict_to_tuples(del_voting_param_vals)[0]:
                 default_style, default_params, delegation_style, delegation_params = del_voting_params
@@ -54,7 +56,7 @@ def single_iter(profile_param_vals:tuple, election_param_vals:dict, del_voting_p
 def single_iter_unpacker(args):
     return single_iter(*args)
 
-def sim_parallel(n_iter:int, profile_param_vals:dict, election_param_vals:dict, del_voting_param_vals:dict, save:bool=True):
+def sim_parallel(n_iter:int, profile_param_vals:dict, election_param_vals:dict, del_voting_param_vals:dict, save:bool=True, experiment_name=None):
     data = {}
     with Pool(mp.cpu_count()-1) as pool:
         for iter_data in pool.imap_unordered(single_iter_unpacker, [[profile_param_vals, election_param_vals, del_voting_param_vals]]*n_iter):
@@ -62,7 +64,7 @@ def sim_parallel(n_iter:int, profile_param_vals:dict, election_param_vals:dict, 
     if save:
         experiment_params = helper.merge_dicts([profile_param_vals, election_param_vals, del_voting_param_vals])
         param_names = helper.params_dict_to_tuples(experiment_params)[1]
-        filename = save_data.pickle_data(data, experiment_params)
+        filename = save_data.pickle_data(data, experiment_params, experiment_name=experiment_name)
         return data, param_names, n_iter, experiment_params, filename
     return data
 
