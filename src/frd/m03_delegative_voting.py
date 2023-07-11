@@ -20,7 +20,7 @@ def majority(binary_matrix)->np.ndarray:
                 else np.random.binomial(1, 0.5) for i in range(n_issues)]
     return np.array(outcomes)
 
-def weighted_majority(binary_matrix:np.ndarray, weights, verbose=False)->np.ndarray:
+def weighted_majority(binary_matrix:np.ndarray, weights)->np.ndarray:
     '''
     Implemented weighted majority voting where preferences are binary and weights are non-negative
 
@@ -28,7 +28,6 @@ def weighted_majority(binary_matrix:np.ndarray, weights, verbose=False)->np.ndar
     -------
     binary_matrix (np.ndarray): Size n_agents x n_issues, cell values are {0,1}
     weights: 1D array of len n_agents (binary_matrix.shape[0]) with non-negative weights
-    **verbose: whether to print info for the steps in the weighted majority vote calculation
 
     RETURNS
     --------
@@ -42,15 +41,6 @@ def weighted_majority(binary_matrix:np.ndarray, weights, verbose=False)->np.ndar
     outcomes = [1 if vote_sums[i] > weight_sum/2.0 
                 else 0 if vote_sums[i] < weight_sum/2.0 
                 else np.random.binomial(1, 0.5) for i in range(n_issues)]
-    if verbose:
-        print('---------------------------')
-        print(f'n_issues: {n_issues}')
-        print(f'issues_profile: {binary_matrix}')
-        print(f'weights: {weights}')
-        print(f'weighted_profile: {weighted_profile}')
-        print(f'vote_sums: {vote_sums}')
-        print(f'weight_sum: {weight_sum}')
-        print(f'outcomes: {outcomes}')
     return np.array(outcomes)
 
 class RD():
@@ -158,12 +148,23 @@ class FRD():
     '''
     def __init__(self, profile:profiles.Profile, election_rule, n_reps, delegation_style:str, delegation_params:dict, default='uniform') -> None:
         self.profile = profile
-        self.n_voters, self.n_cands = profile.get_n_voters(), profile.get_n_cands
+        self.n_voters, self.n_cands = profile.get_n_voters(), profile.get_n_cands()
         self.n_issues = profile.get_n_issues()
-        self.election_rule = rules.rule_dispatcher(election_rule)
         self.n_reps = n_reps
+        self.default=default
+        self.delegation_style = delegation_style
+        self.delegation_params = delegation_params
+        self.delegator_ids = []
+        self.election_rule = rules.rule_dispatcher(election_rule)
         self.rep_ids = []
-        self.weighting = {i:np.zeros(self.n_voters, self.n_cands) for i in range(self.n_issues)}
+        self.weighting = {i:np.zeros((self.n_voters, self.n_reps)) for i in range(self.n_issues)}
+        self.rep_weights = {i:np.zeros(self.n_reps) for i in range(self.n_issues)}
+
+        self.voter_majority_outcomes = None
+
+    def voter_majority_vote(self):
+        self.voter_majority_outcomes = self.profile.get_voter_majority()
+        return self.voter_majority_outcomes
 
     def elect_reps(self):
         if self.election_rule == rules.random_winners:
@@ -177,12 +178,19 @@ class FRD():
         self.rep_prefs = c_prefs[self.rep_ids,:]
         return self.rep_prefs
 
-    def default_weights(self):
-        '''Set default weight given by each voter to each rep on each issue'''
+    def default_weighting(self):
+        '''
+        Set default weight given by each voter to each rep on each issue
+
+        TO DO
+        ------
+        Implement election scores as default
+        
+        '''
         if self.default == 'uniform':
             for i in range(self.n_issues):
                 for v in range(self.n_voters):
-                    self.weighting[i][v] = [1 if c in self.n_reps else 0 for c in range(self.n_cands)]/self.n_reps
+                    self.weighting[i][v] = np.ones(self.n_reps)/self.n_reps
         else:
             raise ValueError(f'Default {self.default} not implemented for FRD')
 
@@ -198,20 +206,80 @@ class FRD():
         return self.delegator_ids
 
     def incisive_delegation(self):
+        '''
+        If a voter is a delegator they give weight 1 to a rep who agrees with them on each issue and 0 to the rest.
+        Weighting is issue-specific.
+        If there is no rep who agrees with them on some issue (so reps are unanimous and voter disagrees), they stick with default
+        '''
         v_prefs, c_prefs = self.profile.get_issue_prefs()
         for i in range(self.n_issues):
             for v in self.delegator_ids:
                 for r in self.rep_ids:
                     if c_prefs[r,i] == v_prefs[v,i]:
-                        self.weighting[i][v] = np.zeros(self.n_cands)
+                        self.weighting[i][v] = np.zeros(self.n_reps)
                         self.weighting[i][v,r] = 1
                         break
         return self.weighting
     
+    def find_best_k(self):
+        k = self.delegation_params['best_k']
+        orders = self.profile.get_orders()
+        best_k = {v:[] for v in range(self.n_voters)}
+        for v in range(self.n_voters):
+            for c in orders[v]:
+                if c in self.rep_ids:
+                    best_k[v].append([c])
+                    if len(best_k[v]) == k:
+                        break
+        return best_k
+    
     def best_k_delegation(self):
-        #for each voter, determine their top k reps
-        #use the top k reps to create delegations for 
-        pass
+        #use the top k reps from each voter to create delegations
+        best_k = self.find_best_k()
+        for v in self.delegator_ids:
+            for r in best_k[v]:
+                for i in range(self.n_issues):
+                    self.weighting[i][v,r] = 1.0/len(best_k[v])
+        return self.weighting
+    
+    def weight_reps(self):
+        self.default_weighting
+        self.select_n_delegators
+        if self.delegation_style == 'best_k':
+            self.best_k_delegation()
+        elif self.delegation_style == 'incisive':
+            self.incisive_delegation
+        self.rep_weights= {i:np.sum(self.weighting[i],axis=0) for i in range(self.n_issues)}
+        return self.rep_weights
+    
+    def weighted_majority(self):
+        '''
+        Computes weighted majority vote on each issue, where rep weights can be different for each issue
+        '''
+
+        outcomes = []
+        for i in range(self.n_issues):
+            rep_weights  = self.rep_weights[i]
+            rep_prefs = self.rep_prefs[:,i]
+
+            weighted_profile = (rep_prefs.T * rep_weights).T
+
+            vote_sum = np.sum(weighted_profile)
+            weight_sum = np.sum(rep_weights, dtype=float)
+            outcomes.append([1 if vote_sum > weight_sum/2.0 
+                        else 0 if vote_sum < weight_sum/2.0 
+                        else np.random.binomial(1, 0.5) for i in range(self.n_issues)])
+        return outcomes
 
     def outcome_agreement(self):
-        pass
+        rep_outcomes = self.weighted_majority()
+        agreement = np.count_nonzero(rep_outcomes == self.profile.get_voter_majority()) / self.n_issues
+        return agreement
+
+    def run_FRD(self):
+        self.elect_reps()
+        self.pull_rep_prefs()
+        self.weight_reps()
+        self.voter_majority_vote()
+        agreement = self.outcome_agreement()
+        return agreement
