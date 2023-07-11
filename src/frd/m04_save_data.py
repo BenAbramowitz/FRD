@@ -94,7 +94,7 @@ def pickle_data(data:dict, experiment_params:dict=None, filename:str = None)->st
     If a file exists pickel.dump() will overwrite the contents of that file.
     '''
 
-    n_iter = len(next(iter(data.values())))
+    n_iter = len(list(data.values())[0])
 
     if filename is None: 
         filename = name_experiment(experiment_params, n_iter)
