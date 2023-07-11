@@ -13,6 +13,8 @@ NOTE: Currently, you want to vary only one independent variable per experiment i
 election rules: ["max_approval","borda","plurality","rav", "max_agreement", "random_winners"]
 '''
 
+EXPERIMENTS = ['1a', '1a_polarized', '1a_similar', '1b', '1b_polarized', '1b_similar', '1c', '1c_polarized', '1c_similar']
+
 if __name__ == '__main__':
     p = Path(__file__).with_name('config.json')
     with p.open('r') as f:
@@ -22,10 +24,11 @@ if __name__ == '__main__':
     save=True
     timer=True
 
-    for e in experiments.keys(): #run all experiments
+    for experiment_name in experiments.keys(): #run all experiments
+        if experiment_name not in EXPERIMENTS: continue
         print('-----------------------------')
-        print('Experiment', e)
-        experiment_params = experiments[e]
+        print('Experiment', experiment_name)
+        experiment_params = experiments[experiment_name]
         n_iter = experiment_params["n_iter"]
         seed = experiment_params.get("seed",None)
         profile_param_vals = experiment_params["profile_param_vals"]
@@ -36,16 +39,16 @@ if __name__ == '__main__':
             start = time.perf_counter()
 
         np.random.seed(seed)
-        data, param_names, n_iter, experiment_params, filename = simulate.sim_parallel(n_iter, profile_param_vals, election_param_vals, del_voting_param_vals, save=save)
+        data, param_names, n_iter, experiment_params, filename = simulate.sim_parallel(n_iter, profile_param_vals, election_param_vals, del_voting_param_vals, save=save, experiment_name = experiment_name)
         if save:
-            print(f'Experiment data saved to: {filename} using pickle')
+            print(f'Experiment {experiment_name} data saved to: {filename} using pickle')
             data_loaded = save_data.unpickle_data(filename)
             analysis.get_moments(filename, param_names, save=True)
             print('Moments computed and saved as csv')
         
         end = time.perf_counter()
-        print(f'Runtime: {end-start}')
-        print(f'Runtime per iter: {(end-start)/n_iter}')
+        print(f'Total runtime: {end-start}')
+        print(f'Avg runtime per iteration: {(end-start)/n_iter}')
 
 
 
