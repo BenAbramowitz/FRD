@@ -19,14 +19,15 @@ if __name__ == '__main__':
         experiments = json.load(f)
         f.close()
 
+    save=True
+    timer=True
+
     for e in experiments.keys(): #run all experiments
         print('-----------------------------')
-        print('Experiment ', e)
+        print('Experiment', e)
         experiment_params = experiments[e]
         n_iter = experiment_params["n_iter"]
-        save = experiment_params["save"]
-        timer = experiment_params["timer"]
-        seed = experiment_params["seed"]
+        seed = experiment_params.get("seed",None)
         profile_param_vals = experiment_params["profile_param_vals"]
         election_param_vals = experiment_params["election_param_vals"]
         del_voting_param_vals = experiment_params["del_voting_param_vals"]
