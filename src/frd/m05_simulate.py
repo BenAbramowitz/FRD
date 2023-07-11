@@ -6,6 +6,7 @@ from . import m02_election_rules as rules
 from . import m03_delegative_voting as d_voting
 from . import m04_save_data as save_data
 
+
 APPROVAL_RULES = ['max_approval', 'rav']
 ORDINAL_RULES = ['borda', 'plurality'] #stv, chamberlain_courant, k_median, copeland...
 AGREEMENT_RULES = ['max_agreement']
@@ -41,7 +42,7 @@ def single_iter(profile_param_vals:tuple, election_param_vals:dict, del_voting_p
             for del_voting_params in helper.params_dict_to_tuples(del_voting_param_vals)[0]:
                 default_style, default_params, delegation_style, delegation_params = del_voting_params
                 if delegation_style is None: #RD
-                    rd = d_voting.RD(prof, election_rule_name, n_reps, default=default_style, default_params=default_params)
+                    rd = d_voting.RD(prof, election_rule_name, n_reps, default=default_style)
                     agreement = rd.run_RD()
                     data[tuple_to_hashable(profile_params+election_params+del_voting_params)] = [agreement]
                 else: #WRD/FRD
@@ -138,3 +139,6 @@ def sim_not_parallel(n_iter:int, profile_param_vals:dict, election_param_vals:di
         print(f'data: {data}')
 
     return data, param_names, n_iter, experiment_params, filename
+
+
+    
