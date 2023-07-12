@@ -1,6 +1,7 @@
 from typing import Tuple #to type hint tuples
-
 import numpy as np
+
+import whalrus
 
 from . import m00_helper as helper
 
@@ -19,8 +20,9 @@ class Profile():
 
         self.approvals = {} #dict of numpy arrays
         self.approval_indicators = {} #dict of numpy arrays
-        self.ordermaps = {} #dict of numpy arrays
+        # self.ordermaps = {} #dict of numpy arrays
         self.orders = {} #dict of numpy arrays
+        self.whalrus_orders = None #whalrus Profile object made from orders
         self.agreements = {} #dict of numpy arrays
 
         self.voter_majority_outcomes = None
@@ -52,7 +54,7 @@ class Profile():
         self.distances = None #np.empty((n_voters, n_cands))
         self.approvals = {} #dict of numpy arrays
         self.approval_indicators = {} #dict of numpy arrays
-        self.ordermaps = {} #dict of numpy arrays
+        # self.ordermaps = {} #dict of numpy arrays
         self.orders = {} #dict of numpy arrays
         self.agreements = {} #dict of numpy arrays
         self.voter_majority_outcomes = None #numpy array of len n_issues
@@ -140,22 +142,29 @@ class Profile():
         self.orders = {v_id:helper.array1D_to_sorted(self.distances[v_id], seed=None)[:,2].astype(int) for v_id in range(self.n_voters)}
         return self.orders
     
-    def orders_to_ordermaps(self)->dict:
-        '''
-        RETURNS
-        -------
-        self.ordermaps (dict of 1D numpy arrays): keys are voters, values are lists of indices of len n_cands
-        self.ordermaps[v][c] = 3 means voter v ranks cand c in 4th place
+    # def orders_to_ordermaps(self)->dict:
+    #     '''
+    #     RETURNS
+    #     -------
+    #     self.ordermaps (dict of 1D numpy arrays): keys are voters, values are lists of indices of len n_cands
+    #     self.ordermaps[v][c] = 3 means voter v ranks cand c in 4th place
 
-        NOTES
-        ------
-        Can use argsort here with its lexicographic tiebreaking because random tiebreaking is already used to construct the orders
+    #     NOTES
+    #     ------
+    #     Can use argsort here with its lexicographic tiebreaking because random tiebreaking is already used to construct the orders
 
-        '''
+    #     '''
+    #     if self.orders == {}:
+    #         self.distances_to_orders()
+    #     self.ordermaps = {v_id:np.argsort(self.orders[v_id]) for v_id in range(self.n_voters)}
+    #     return self.ordermaps
+    
+    def orders_to_whalrus(self):
         if self.orders == {}:
             self.distances_to_orders()
-        self.ordermaps = {v_id:np.argsort(self.orders[v_id]) for v_id in range(self.n_voters)}
-        return self.ordermaps
+        self.whalrus_orders = whalrus.Profile([whalrus.BallotOrder(self.orders[v].tolist()) for v in range(self.n_voters)])
+        return self.whalrus_orders
+
     
     def distances_to_agreements(self):
         if self.distances is None:
@@ -163,7 +172,7 @@ class Profile():
         self.agreements = {v_id: 1 - self.distances[v_id] for v_id in range(self.n_voters)}
         return self.agreements
     
-    def new_instance(self, approvals = True, ordinals = True, agreements = True):
+    def new_instance(self, approvals = True, ordinals = True, agreements = True, whalrus_orders=True):
         '''
         Creates new profile, distances, and derived election profiles indicated by kwargs.
 
@@ -181,7 +190,9 @@ class Profile():
             self.approvals_to_indicators() #used for rav
         if ordinals:
             self.distances_to_orders() #used for scoring rules, e.g. Borda and Plurality
-            self.orders_to_ordermaps()
+            # self.orders_to_ordermaps()
+            if whalrus_orders:
+                self.orders_to_whalrus()
         if agreements:
             self.distances_to_agreements() #used for max_agreement
         return vars(self)
@@ -189,8 +200,8 @@ class Profile():
 
     ## Setters
 
-    def set_ordermaps(self, ordermaps):
-        self.ordermaps = ordermaps
+    # def set_ordermaps(self, ordermaps):
+    #     self.ordermaps = ordermaps
 
     def set_agreements(self, agreements):
         self.agreements = agreements
@@ -236,6 +247,9 @@ class Profile():
 
     def get_orders(self):
         return self.orders
+    
+    def get_whalrus_orders(self):
+        return self.whalrus_orders
 
     def get_distances(self):
         return self.distances
