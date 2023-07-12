@@ -165,6 +165,7 @@ def compare(filename, experiment_name, l_var:str, x_var:str, y_var='mean', save=
         p.set_xticklabels(p.get_xticklabels(), rotation=20, ha="right")
     p.set(title=title, xlabel=xlabel, ylabel=ylabel)
     if save:
+        plt.figure(figsize=(8,8))
         fig = p.get_figure()
         fig.savefig('./plots/'+experiment_name+'_compare_'+l_var+'_'+y_var+'_vs_'+x_var)
         plt.close(fig)
