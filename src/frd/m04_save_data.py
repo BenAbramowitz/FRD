@@ -75,7 +75,7 @@ def name_experiment(experiment_params:dict, n_iter:int)->str:
 
     return name
 
-def pickle_data(data:dict, experiment_params:dict=None, experiment_name:str = None)->str:
+def pickle_data(data:dict, experiment_params:dict=None, experiment_name:str = None, data_dir='./data/')->str:
     '''
     Save experiment data (dict), creating a filename from experiment_params if not given.
 
@@ -83,27 +83,22 @@ def pickle_data(data:dict, experiment_params:dict=None, experiment_name:str = No
     ------
     data (dict): keys are tuples of param values, values are lists of agreement values of length n_iter. This is experiment output to be written to file.
     **experiment_params (dict): keys are param names (str), values are lists. This was input to the experiment. Used to name file if filename not given.
-    **filename (str): Name of file to write data to
+    **experiment_name (str): Prefix of file to write data to
 
     RETURNS
     -------
-    filename (str): Name of file where data was written.
+    filenam (str): Name of file where data was written.
 
     NOTES
     --------
     If a file exists pickel.dump() will overwrite the contents of that file.
     '''
-
     n_iter = len(list(data.values())[0])
-
-    if experiment_name is None: 
-        experiment_name = name_experiment(experiment_params, n_iter)
-        # print(f'filename created: {filename}')
-
-    # data['param_names'] = list(experiment_params.keys())
-    with open('./data/'+experiment_name+'_data', 'wb') as output_file:
+    if experiment_name is None: experiment_name = name_experiment(experiment_params, n_iter)
+    filename = experiment_name+'_data'
+    with open(data_dir+filename, 'wb') as output_file:
         pickle.dump(data, output_file)
-    return experiment_name+'_data'
+    return filename
 
 def unpickle_data(filename)->dict:
     with open('./data/'+filename, 'rb') as input_file:
