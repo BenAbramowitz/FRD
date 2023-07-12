@@ -29,26 +29,31 @@ if __name__ == '__main__':
         if experiment_name not in EXPERIMENTS: continue #which experiments to run
         print('-----------------------------')
         print('Experiment', experiment_name)
+        #unpack experiment parameters
         experiment_params = experiments[experiment_name]
-        #experiment_params["n_iter"]
         profile_param_vals = experiment_params["profile_param_vals"]
         election_param_vals = experiment_params["election_param_vals"]
         del_voting_param_vals = experiment_params["del_voting_param_vals"]
     
-        if timer:
-            start = time.perf_counter()
+        if timer: start = time.perf_counter()
 
+        #run simulation for this experiment
         data, param_names, n_iter, experiment_params, filename = simulate.sim_parallel(n_iter, profile_param_vals, election_param_vals, del_voting_param_vals, save=save, experiment_name = experiment_name)
+
+        #save data and anlysis (i.e. moments)
         if save:
             print(f'Experiment data saved to: {filename} using pickle')
             data_loaded = save_data.unpickle_data(filename)
             analysis.get_moments(filename, param_names, save=True)
             print('Moments computed and saved as csv')
         
-        end = time.perf_counter()
-        print(f'Total runtime: {end-start}')
-        print(f'Avg runtime per iteration: {(end-start)/n_iter}')
+        #Report runtime
+        if timer:
+            end = time.perf_counter()
+            print(f'Total runtime: {end-start}')
+            print(f'Avg runtime per iteration: {(end-start)/n_iter}')
 
+    #Create plots for all data in the data folder and save/show them
     if save: plot.compare_all(data_dir='./data/', y_var='mean', save=True, show=False)
 
 
