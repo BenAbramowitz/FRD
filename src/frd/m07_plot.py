@@ -22,27 +22,17 @@ def var_to_title(s):
         return s
     s = s.replace('_', ' ')
     if s.lower() in ['rav', 'irv']: return s.upper() #handle known acronyms
-    else: return s.title()
+    if s.lower() in ['Cands p', 'Voters p']: return s.lower() #handle case where p is Bernoulli parameter
+    return s.title()
 
 
 def label_plot(x_var, y_var):
     '''
     
-    TO DO
-    -------
-    Format legend values
-    
     '''
-    # prefix = helper.get_file_prefix(filename)
-    # path = Path("./data")
-    # datafile = str([f for f in listdir(path) if isfile(join(path, f)) and f[0:3] == prefix and 'RD' in f and 'moments' not in f])
 
     title = ""
     x_label, y_label = "", ""
-    # if "FRD" in datafile:
-    #     title = "FRD: "
-    # elif "RD" in datafile:
-    #     title = "RD: "
 
     if y_var == 'mean':
         y_label = "Mean Agreement"
@@ -156,6 +146,8 @@ def compare(filename, experiment_name, l_var:str, x_var:str, y_var='mean', save=
     df[l_var] = df[l_var].apply(lambda x: var_to_title(x))
     df[x_var] = df[x_var].apply(lambda x: var_to_title(x))
 
+    sns.set(rc={"figure.figsize":(8, 8)})
+    sns.set_style("white")
     p = sns.lineplot(data=df, x=x_var, y=y_var, hue=l_var)
 
     #format the plot
@@ -168,11 +160,14 @@ def compare(filename, experiment_name, l_var:str, x_var:str, y_var='mean', save=
     p.set(title=title, xlabel=xlabel, ylabel=ylabel)
     
     #Create figure for plot and save/show it
-    plt.figure(figsize=(8,8))
-    fig = p.get_figure()
-    if save: fig.savefig('./plots/'+experiment_name+'_compare_'+l_var+'_'+y_var+'_vs_'+x_var)
-    if show: plt.show()
-    plt.close(fig)
+    if save: 
+        fig = p.get_figure()
+        fig.savefig('./plots/'+experiment_name+'_compare_'+l_var+'_'+y_var+'_vs_'+x_var)
+        if not show: plt.close(fig)
+    if show: 
+        plt.show()
+        
+    
 
     
 
@@ -187,20 +182,14 @@ def compare_all(data_dir='./data/', y_var='mean', save=True, show=True)->None:
     Update the way data and moments files are matched up so it depends only on their prefix and not their order in the files list
 
     '''
-    #get list of all experiments for which we have the data and moments
+    #get list of all experiments for which we have the moments analyzed
     path = Path(data_dir)
     momentfiles = sorted([f for f in listdir(path) if isfile(join(path, f)) and '_moments' in f])
-    datafiles = sorted([f for f in listdir(path) if isfile(join(path, f)) and '_data' in f])
 
     #for each experiment, read in the data and plot based on number of idnependent variables
     for idx,f in enumerate(momentfiles):
         check_filetype(f, 'csv')
-        experiment_name = f[0:-12]
-        if experiment_name != datafiles[idx][0:-5]: #check that filename prefixes match
-            print(f'Mismatch between data and moments files in {data_dir}: {f}')
-            print(f[0:-12])
-            print(datafiles[idx][0:-5])
-            continue
+        experiment_name = f.partition('_moments')[0]
         df = pd.read_csv(data_dir+f)
         varied = get_columns_with_multiple_unique_values(df.iloc[:,1:14])#Only the independent variables, ignore index column
         if len(varied) > 2:
