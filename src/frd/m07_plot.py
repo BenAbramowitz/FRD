@@ -22,7 +22,7 @@ def var_to_title(s):
     return s.title()
 
 
-def label_compare_rules_plot(filename, x_var, y_var):
+def label_compare_rules_plot(x_var, y_var):
     '''
     
     TO DO
@@ -30,16 +30,16 @@ def label_compare_rules_plot(filename, x_var, y_var):
     Format legend values
     
     '''
-    prefix = helper.get_file_prefix(filename)
-    path = Path("./data")
-    datafile = str([f for f in listdir(path) if isfile(join(path, f)) and f[0:3] == prefix and 'RD' in f and 'moments' not in f])
+    # prefix = helper.get_file_prefix(filename)
+    # path = Path("./data")
+    # datafile = str([f for f in listdir(path) if isfile(join(path, f)) and f[0:3] == prefix and 'RD' in f and 'moments' not in f])
 
     title = ""
-    x_label, y_label = "", ""
-    if "FRD" in datafile:
-        title = "FRD: "
-    elif "RD" in datafile:
-        title = "RD: "
+    # x_label, y_label = "", ""
+    # if "FRD" in datafile:
+    #     title = "FRD: "
+    # elif "RD" in datafile:
+    #     title = "RD: "
 
     if y_var == 'mean':
         y_label = "Mean Agreement"
@@ -85,7 +85,22 @@ def label_compare_rules_plot(filename, x_var, y_var):
 
     return title, x_label, y_label
 
-def compare_rules(filename, x_var:str, y_var='mean', save=True, show=False, data_dir='./data/'):
+def create_subtitle(x_var:str, y_var:str, params:dict):
+    subtitle = ""
+    if x_var != 'n_voters':
+        subtitle += f'{params["n_voters"]} voters'
+    if x_var != 'n_cands':
+        if subtitle != "": subtitle += ', '
+        subtitle += f'{params["n_cands"]} cands'
+    if x_var != 'n_issues':
+        if subtitle != "": subtitle += ', '
+        subtitle += f'{params["n_issues"]} issues'
+    if x_var != 'n_reps':
+        if subtitle != "": subtitle += ', '
+        subtitle += f'{params["n_reps"]} reps'
+    return subtitle
+
+def compare_rules(filename, experiment_name, x_var:str, y_var='mean', save=True, show=False, data_dir='./data/'):
     '''
     Takes in a dataframe of agreements and then plots agreement vs. x_var lines for each rule
 
@@ -106,16 +121,13 @@ def compare_rules(filename, x_var:str, y_var='mean', save=True, show=False, data
     df['election_rules'] = df['election_rules'].apply(lambda x: var_to_title(x))
 
     p = sns.lineplot(data=df, x=x_var, y=y_var, hue='election_rules')
-    title, xlabel, ylabel = label_compare_rules_plot(filename, x_var, y_var)
-    # rules = df['election_rules'].drop_duplicates()
-    # legend_keys = list(map(var_to_title, rules))
+    title, xlabel, ylabel = label_compare_rules_plot(x_var, y_var)
     if y_var == 'mean': p.set_yticks(np.arange(0,101,10)/100)
-    p.legend(title='Election Rules')#,labels=legend_keys)
+    p.legend(title='Election Rules')
 
     p.set(title=title, xlabel=xlabel, ylabel=ylabel)
     if save:
-        prefix = helper.get_file_prefix(filename)
         fig = p.get_figure()
-        fig.savefig('./plots/'+prefix+'_compare_rules_'+y_var+'_vs_'+x_var)
+        fig.savefig('./plots/'+experiment_name+'_compare_rules_'+y_var+'_vs_'+x_var)
     if show:
         plt.show()
