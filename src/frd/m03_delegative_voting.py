@@ -145,14 +145,15 @@ class FRD():
     '''
 
     '''
-    def __init__(self, profile:profiles.Profile, election_rule, n_reps, delegation_style:str, delegation_params:dict, default='uniform') -> None:
+    def __init__(self, profile:profiles.Profile, election_rule, n_reps, del_style, best_k, n_delegators, default='uniform') -> None:
         self.profile = profile
         self.n_voters, self.n_cands = profile.get_n_voters(), profile.get_n_cands()
         self.n_issues = profile.get_n_issues()
         self.n_reps = n_reps
         self.default=default
-        self.delegation_style = delegation_style
-        self.delegation_params = delegation_params
+        self.del_style = del_style
+        self.best_k = best_k
+        self.n_delegators = n_delegators
         self.delegator_ids = []
         self.election_rule = rules.rule_dispatcher(election_rule)
         self.rep_ids = []
@@ -197,7 +198,7 @@ class FRD():
         ----
         Assumes it is the same n voters delegating on every issue.
         '''
-        self.delegator_ids = np.random.choice(self.n_voters, self.delegation_params['n_delegators'], replace=False)
+        self.delegator_ids = np.random.choice(self.n_voters, self.n_delegators, replace=False)
         return self.delegator_ids
 
     def incisive_delegation(self):
@@ -221,17 +222,16 @@ class FRD():
         return self.weighting
     
     def find_best_k(self):
-        k = self.delegation_params['best_k']
         self.select_n_delegators()
         orders = self.profile.get_orders()
-        best_k = {v:[] for v in range(self.n_voters)}
+        best_ks = {v:[] for v in range(self.n_voters)}
         for v in self.delegator_ids:
             for c in orders[v]:
                 if c in self.rep_ids:
-                    best_k[v].append([c])
-                    if len(best_k[v]) == k:
+                    best_ks[v].append([c])
+                    if len(best_ks[v]) == self.best_k:
                         break
-        return best_k
+        return best_ks
     
     def best_k_delegation(self):
         #use the top k reps from each voter to create delegations
@@ -245,9 +245,9 @@ class FRD():
     def weight_reps(self):
         self.default_weighting()
         self.select_n_delegators()
-        if self.delegation_style == 'best_k':
+        if self.del_style == 'best_k':
             self.best_k_delegation()
-        elif self.delegation_style == 'incisive':
+        elif self.del_style == 'incisive':
             self.incisive_delegation()
         self.rep_weights= {i:np.sum(self.weighting[i],axis=0) for i in range(self.n_issues)}
         #print(f'weighting: {self.weighting}')

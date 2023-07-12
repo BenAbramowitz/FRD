@@ -42,12 +42,12 @@ def single_iter(profile_param_vals:tuple, election_param_vals:dict, del_voting_p
             if n_reps > n_cands: break #skip nonsenical case where number of reps to elect is greater than number of cands
             
             for del_voting_params in helper.params_dict_to_tuples(del_voting_param_vals)[0]:
-                default_style, default_params, delegation_style, delegation_params = del_voting_params
-                if delegation_style is None: #RD
-                    rd = d_voting.RD(prof, election_rule_name, n_reps, default=default_style)
+                default, del_style, best_k, n_delegators = del_voting_params
+                if del_style is None: #RD
+                    rd = d_voting.RD(prof, election_rule_name, n_reps, default=default)
                     agreement = rd.run_RD()
                 else: #FRD
-                    frd = d_voting.FRD(prof, election_rule_name, n_reps, delegation_style, delegation_params, default='uniform')
+                    frd = d_voting.FRD(prof, election_rule_name, n_reps, del_style=del_style, best_k=best_k, n_delegators = n_delegators, default=default)
                     agreement = frd.run_FRD()
                 data[tuple_to_hashable(profile_params+election_params+del_voting_params)] = [agreement]
     return data
