@@ -49,20 +49,6 @@ if __name__ == '__main__':
         print(f'Total runtime: {end-start}')
         print(f'Avg runtime per iteration: {(end-start)/n_iter}')
 
-
-    plot.compare_rules('1a_moments.csv', '1a', x_var='n_issues', y_var='mean', save=True, show=True)
-    plot.compare_rules('1b_moments.csv', '1b', x_var='n_reps', y_var='mean', save=True, show=True)
-    plot.compare_rules('1c_moments.csv', '1c', x_var='n_cands', y_var='mean', save=True, show=True)
-
-    plot.compare_rules('1a_polarized_moments.csv', '1a_polarized', x_var='n_issues', y_var='mean', save=True, show=True)
-    plot.compare_rules('1b_polarized_moments.csv', '1b_polarized',  x_var='n_reps', y_var='mean', save=True, show=True)
-    plot.compare_rules('1c_polarized_moments.csv', '1c_polarized',  x_var='n_cands', y_var='mean', save=True, show=True)
-
-    plot.compare_rules('1a_similar_moments.csv', '1a_similar', x_var='n_issues', y_var='mean', save=True, show=True)
-    plot.compare_rules('1b_similar_moments.csv', '1b_similar', x_var='n_reps', y_var='mean', save=True, show=True)
-    plot.compare_rules('1c_similar_moments.csv', '1c_similar', x_var='n_cands', y_var='mean', save=True, show=True)
-
-    plot.compare_rules('RD_cands_p_moments.csv', 'RD_cands_p', x_var='cands_p', y_var='mean', save=True, show=True)
-    plot.compare_rules('RD_cands_p_biased_moments.csv', 'RD_cands_p_biased', x_var='cands_p', y_var='mean', save=True, show=True)
+    if save: plot.compare_all(data_dir='./data/', y_var='mean', save=True, show=False)
 
 
