@@ -10,9 +10,13 @@ For more information on Flexible Representative Democracy, please see our public
 ```bash pip install -r requirements.txt```
 
 ## Run Experiments
-```[Stay Tuned]```
+```python -m main```
 
-The generic experiment structure has 3 steps: Profile creation, election, and weighted (delegative) voting. Each of these has its own module (m01, m02, and m03).
+The parameters for experiments are found in config.json, where each experiment is read in as a dict with its parameters as keys.
+All current experiments compare the election rules, so that each plot has a line per election rule. Each experiment varies one other parameter to serve as the independent variable in the experiment.
+
+The generic experiment structure has 3 steps: Profile creation, election, and weighted (delegative) voting. Each of these has its own module (m01, m02, and m03) and its own set of parameters.
+
 
 
 ## Dev Notes
@@ -34,9 +38,8 @@ An instance of an FRD problem consists of three sequential components: (1) creat
 ### Implementation Details
 - Currently ordinal prefs (orders, ordermaps) cannot be incomplete. This is because these ordinal preferences are dicts where keys are voters and values are static 1D numpy arrays of fixed length.
 - Unlike the other rules, RAV does not break ties randomly. It breaks ties lexicographically. However, this does not impact our current experiments because all agent prefs are independent Bernoulli random variables.
-- Currently stv/irv not implemented. Could use whalrus Python library, but need to convert the profile order to a whalrus BallotOrder.
-- Currently Chamberlain-Courant and k-Medians are not implemented either (both NP-Hard).
-- Still have ordermaps implemented from earlier implementation but does not currently appear to be needed. Might be useful for implementing STV, but if not it can probably be removed.
+- Currently Chamberlain-Courant and k-Medians are not implemented (both NP-Hard).
+- The implementation for ordermaps can be removed, it is no longer used in the current version.
 
 
 ### Bottlenecks and Efficiency
