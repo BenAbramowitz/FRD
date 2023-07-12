@@ -153,7 +153,7 @@ def get_file_prefix(f)->str:
     '''
     prefix = ""
     for char in str(f):
-        if char.isdigit():
+        if char != '_':
             prefix += char
         else:
             break
