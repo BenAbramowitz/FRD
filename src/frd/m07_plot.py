@@ -103,37 +103,37 @@ def create_subtitle(x_var:str, y_var:str, params:dict):
         subtitle += f'{params["n_reps"]} reps'
     return subtitle
 
-def compare_rules(filename, experiment_name, x_var:str, y_var='mean', save=True, show=False, data_dir='./data/'):
-    '''
-    Takes in a dataframe of agreements and then plots agreement vs. x_var lines for each rule
+# def compare_rules(filename, experiment_name, x_var:str, y_var='mean', save=True, show=False, data_dir='./data/'):
+#     '''
+#     Takes in a dataframe of agreements and then plots agreement vs. x_var lines for each rule
 
-    TODO
-    ----------
-    Change labels of election rules in the legend to title case. 
-    For some reason doing this changes the legend keys incorrectly so the colors next to the vals don't match the plot.
-    Attempt to change using p.legend(...labels=...) is commented out
+#     TODO
+#     ----------
+#     Change labels of election rules in the legend to title case. 
+#     For some reason doing this changes the legend keys incorrectly so the colors next to the vals don't match the plot.
+#     Attempt to change using p.legend(...labels=...) is commented out
 
-    NOTES
-    ------
-    If the data set has more than one independent variable that was varied, this plot will not come out right.
-    If plot exists with the same name it will get overwritten
+#     NOTES
+#     ------
+#     If the data set has more than one independent variable that was varied, this plot will not come out right.
+#     If plot exists with the same name it will get overwritten
 
-    '''
-    check_filetype(filename, 'csv')
-    df = pd.read_csv(data_dir+filename)
-    df['election_rules'] = df['election_rules'].apply(lambda x: var_to_title(x))
+#     '''
+#     check_filetype(filename, 'csv')
+#     df = pd.read_csv(data_dir+filename)
+#     df['election_rules'] = df['election_rules'].apply(lambda x: var_to_title(x))
 
-    p = sns.lineplot(data=df, x=x_var, y=y_var, hue='election_rules')
-    title, xlabel, ylabel = label_plot(x_var, y_var)
-    if y_var == 'mean': p.set_yticks(np.arange(0,101,10)/100)
-    p.legend(title='Election Rules')
+#     p = sns.lineplot(data=df, x=x_var, y=y_var, hue='election_rules')
+#     title, xlabel, ylabel = label_plot(x_var, y_var)
+#     if y_var == 'mean': p.set_yticks(np.arange(0,101,10)/100)
+#     p.legend(title='Election Rules')
 
-    p.set(title=title, xlabel=xlabel, ylabel=ylabel)
-    if save:
-        fig = p.get_figure()
-        fig.savefig('./plots/'+experiment_name+'_compare_rules_'+y_var+'_vs_'+x_var)
-    if show:
-        plt.show()
+#     p.set(title=title, xlabel=xlabel, ylabel=ylabel)
+#     if save:
+#         fig = p.get_figure()
+#         fig.savefig('./plots/'+experiment_name+'_compare_rules_'+y_var+'_vs_'+x_var)
+#     if show:
+#         plt.show()
 
 
 def plot_one_var(filename, experiment_name, x_var:str, y_var='mean', save=True, show=False, data_dir='./data/'):
@@ -157,6 +157,8 @@ def compare(filename, experiment_name, l_var:str, x_var:str, y_var='mean', save=
     df[x_var] = df[x_var].apply(lambda x: var_to_title(x))
 
     p = sns.lineplot(data=df, x=x_var, y=y_var, hue=l_var)
+
+    #format the plot
     title, xlabel, ylabel = label_plot(x_var, y_var)
     if y_var == 'mean': p.set_yticks(np.arange(0,101,10)/100)
     p.legend(title=var_to_title(l_var))
@@ -164,28 +166,43 @@ def compare(filename, experiment_name, l_var:str, x_var:str, y_var='mean', save=
         p.set_xticks(p.get_xticks()) #dumb hack to prevent set_xticklabels from issuing a warning
         p.set_xticklabels(p.get_xticklabels(), rotation=20, ha="right")
     p.set(title=title, xlabel=xlabel, ylabel=ylabel)
-    if save:
-        plt.figure(figsize=(8,8))
-        fig = p.get_figure()
-        fig.savefig('./plots/'+experiment_name+'_compare_'+l_var+'_'+y_var+'_vs_'+x_var)
-        plt.close(fig)
-    if show:
-        plt.show()
+    
+    #Create figure for plot and save/show it
+    plt.figure(figsize=(8,8))
+    fig = p.get_figure()
+    if save: fig.savefig('./plots/'+experiment_name+'_compare_'+l_var+'_'+y_var+'_vs_'+x_var)
+    if show: plt.show()
+    plt.close(fig)
+
     
 
 def compare_all(data_dir='./data/', y_var='mean', save=True, show=True)->None:
-    path = Path("./data")
+    '''
+    For all experiments with 1 or 2 independent variables, read in the moments, and create a line plot
+    The variable for the y-axis is given, and the x_var and l_var are inferred
+    x_var goes on the x_axis and l_var determines each of the separate lines on the plot ('hue')
+
+    TODO
+    ------
+    Update the way data and moments files are matched up so it depends only on their prefix and not their order in the files list
+
+    '''
+    #get list of all experiments for which we have the data and moments
+    path = Path(data_dir)
     momentfiles = sorted([f for f in listdir(path) if isfile(join(path, f)) and '_moments' in f])
     datafiles = sorted([f for f in listdir(path) if isfile(join(path, f)) and '_data' in f])
+
+    #for each experiment, read in the data and plot based on number of idnependent variables
     for idx,f in enumerate(momentfiles):
         check_filetype(f, 'csv')
         experiment_name = f[0:-12]
-        if experiment_name != datafiles[idx][0:-5]:
+        if experiment_name != datafiles[idx][0:-5]: #check that filename prefixes match
             print(f'Mismatch between data and moments files in {data_dir}: {f}')
+            print(f[0:-12])
             print(datafiles[idx][0:-5])
             continue
         df = pd.read_csv(data_dir+f)
-        varied = get_columns_with_multiple_unique_values(df.iloc[:,1:14])
+        varied = get_columns_with_multiple_unique_values(df.iloc[:,1:14])#Only the independent variables, ignore index column
         if len(varied) > 2:
             print(f'Moments file contains more than two independent variables, cannot automatically plot comparisons: {f}')
             continue
@@ -196,6 +213,13 @@ def compare_all(data_dir='./data/', y_var='mean', save=True, show=True)->None:
             plot_one_var(f, experiment_name, x_var=varied[0], y_var=y_var, save=save, show=show, data_dir=data_dir)
 
 def get_columns_with_multiple_unique_values(df)->list:
+    '''
+    Given a DataFrame return names of columns that contain more than one value
+
+    NOTES
+    -----
+    Used to identify the independent variables from an experiment
+    '''
     columns_with_multiple_unique_values = []
     for column in df.columns:
         unique_values = df[column].nunique()
