@@ -9,15 +9,17 @@ from . import m04_save_data as save_data
 
 
 APPROVAL_RULES = ['max_approval', 'rav']
-ORDINAL_RULES = ['borda', 'plurality'] #stv, chamberlain_courant, k_median, copeland...
+ORDINAL_RULES = ['borda', 'plurality']
 AGREEMENT_RULES = ['max_agreement']
+WHALRUS_RULES = ['irv']
 
 def profiles_needed(election_rules_list):
     election_rules_set = set(election_rules_list)
     approvals = not election_rules_set.isdisjoint(APPROVAL_RULES) #bool
     ordinals = not set(election_rules_set).isdisjoint(ORDINAL_RULES) #bool
     agreements = not set(election_rules_set).isdisjoint(AGREEMENT_RULES) #bool
-    return {'approvals':approvals, 'ordinals':ordinals, 'agreements':agreements}
+    whalrus = not set(election_rules_set).isdisjoint(WHALRUS_RULES) #bool
+    return {'approvals':approvals, 'ordinals':ordinals, 'agreements':agreements, 'whalrus_orders':whalrus}
 
 def tuple_to_hashable(tup):
     #Converts a tuple with non-hashable types into a tuple of strings (e.g. to be used as keys in dict)
@@ -29,18 +31,15 @@ def single_iter(profile_param_vals:tuple, election_param_vals:dict, del_voting_p
 
     for profile_params in helper.params_dict_to_tuples(profile_param_vals)[0]:
         # create new profile instance
-        # derive only the election profiles necessary, depending on what rules will be used
         (n_voters, n_cands, n_issues, voters_p, cands_p, app_k, app_thresh) = profile_params
         prof = profiles.Profile(n_voters, n_cands, n_issues, voters_p, cands_p, app_k, app_thresh)
         election_rules = election_param_vals.get('election_rules')
-        prof.new_instance(**profiles_needed(election_rules))
+        prof.new_instance(**profiles_needed(election_rules)) # derive only the election profiles necessary
 
         for election_params in helper.params_dict_to_tuples(election_param_vals)[0]:
             # elect reps to get rep_ids and election_scores (if election rule provides scores)
             election_rule_name, n_reps = election_params
             if n_reps > n_cands: break #skip nonsenical case where number of reps to elect is greater than number of cands
-            #print('election rule:', election_rule_name)
-            #print('n_reps:', n_reps)
             
             for del_voting_params in helper.params_dict_to_tuples(del_voting_param_vals)[0]:
                 default_style, default_params, delegation_style, delegation_params = del_voting_params
