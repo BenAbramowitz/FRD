@@ -1,6 +1,5 @@
 {
     "RD_cands_p":{
-        "n_iter":100,
         "profile_param_vals":{
             "n_voters":[501],
             "n_cands":[100],
@@ -22,7 +21,6 @@
         }
     },
     "RD_cands_p_biased":{
-        "n_iter":100,
         "profile_param_vals":{
             "n_voters":[501],
             "n_cands":[100],
@@ -44,7 +42,6 @@
         }
     },
     "1a":{
-        "n_iter":100,
         "profile_param_vals":{
             "n_voters":[501],
             "n_cands":[60],
@@ -66,7 +63,6 @@
         }
     },
     "1b":{
-        "n_iter":10,
         "profile_param_vals":{
             "n_voters":[501],
             "n_cands":[100],
@@ -88,7 +84,6 @@
         }
     },
     "1c":{
-        "n_iter":10,
         "profile_param_vals":{
             "n_voters":[501],
             "n_cands":[10,20,30,40,50,60,70,80,90,100],
@@ -110,7 +105,6 @@
         }
     },
     "1a_polarized":{
-        "n_iter":10,
         "profile_param_vals":{
             "n_voters":[501],
             "n_cands":[60],
@@ -132,7 +126,6 @@
         }
     },
     "1b_polarized":{
-        "n_iter":10,
         "profile_param_vals":{
             "n_voters":[501],
             "n_cands":[100],
@@ -154,7 +147,6 @@
         }
     },
     "1c_polarized":{
-        "n_iter":10,
         "profile_param_vals":{
             "n_voters":[501],
             "n_cands":[10,20,30,40,50,60,70,80,90,100],
@@ -176,7 +168,6 @@
         }
     },
     "1a_similar":{
-        "n_iter":10,
         "profile_param_vals":{
             "n_voters":[501],
             "n_cands":[60],
@@ -198,7 +189,6 @@
         }
     },
     "1b_similar":{
-        "n_iter":10,
         "profile_param_vals":{
             "n_voters":[501],
             "n_cands":[100],
@@ -220,7 +210,6 @@
         }
     },
     "1c_similar":{
-        "n_iter":10,
         "profile_param_vals":{
             "n_voters":[501],
             "n_cands":[10,20,30,40,50,60,70,80,90,100],
