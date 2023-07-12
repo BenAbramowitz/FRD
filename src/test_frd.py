@@ -1,8 +1,8 @@
 import unittest
 import numpy as np
 
-import frd.helper as helper
-import frd.profiles as profiles
+import frd.m00_helper as helper
+import frd.m01_profiles as profiles
 import frd.m02_election_rules as rules
 import frd.m03_delegative_voting as d_voting
 import frd.m05_simulate as simulate
