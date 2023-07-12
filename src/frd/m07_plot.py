@@ -67,12 +67,14 @@ def label_plot(x_var, y_var):
         x_label = "Approval Threshold"
     elif x_var.lower() == "default_style":
         x_label = "Default Weighting"
-    elif x_var.lower() == "default_params":
-        x_label = "Default Parameter"
-    elif x_var.lower() == "delegation_style":
+    # elif x_var.lower() == "default_params":
+    #     x_label = "Default Parameter"
+    elif x_var.lower() == "del_style":
         x_label = "Delegation Style"
-    elif x_var.lower() == "delegation_params":
-        x_label = "Delegation Parameter"
+    elif x_var.lower() == "best_k":
+        x_label = "Best k"
+    elif x_var.lower() == "n_delegators":
+        x_label = "Number of Delegators"
 
     title += x_label
 
@@ -130,6 +132,8 @@ def plot_one_var(filename, experiment_name, x_var:str, y_var='mean', save=True, 
     check_filetype(filename, 'csv')
     df = pd.read_csv(data_dir+filename)
     df[x_var] = df[x_var].apply(lambda x: var_to_title(x))
+    sns.set_theme(rc={"figure.figsize":(8, 8)})
+    sns.set_style("white")
     p = sns.lineplot(data=df, x=x_var, y=y_var)
     title, xlabel, ylabel = label_plot(x_var, y_var)
     if y_var == 'mean': p.set_yticks(np.arange(0,101,10)/100)
@@ -140,13 +144,13 @@ def plot_one_var(filename, experiment_name, x_var:str, y_var='mean', save=True, 
     if show:
         plt.show()
 
-def compare(filename, experiment_name, l_var:str, x_var:str, y_var='mean', save=True, show=False, data_dir='./data/'):
+def plot_two_var(filename, experiment_name, l_var:str, x_var:str, y_var='mean', save=True, show=False, data_dir='./data/'):
     check_filetype(filename, 'csv')
     df = pd.read_csv(data_dir+filename)
     df[l_var] = df[l_var].apply(lambda x: var_to_title(x))
     df[x_var] = df[x_var].apply(lambda x: var_to_title(x))
 
-    sns.set(rc={"figure.figsize":(8, 8)})
+    sns.set_theme(rc={"figure.figsize":(8, 8)})
     sns.set_style("white")
     p = sns.lineplot(data=df, x=x_var, y=y_var, hue=l_var)
 
@@ -166,10 +170,12 @@ def compare(filename, experiment_name, l_var:str, x_var:str, y_var='mean', save=
         if not show: plt.close(fig)
     if show: 
         plt.show()
-        
     
 
-    
+def plot_moments(momentsfile:str, y_var:str='mean', save:bool=True, show:bool=False, data_dir:str='./data/'):
+    #determine if one var or two far then call the correct plotting function
+    pass
+
 
 def compare_all(data_dir='./data/', y_var='mean', save=True, show=True)->None:
     '''
@@ -191,13 +197,13 @@ def compare_all(data_dir='./data/', y_var='mean', save=True, show=True)->None:
         check_filetype(f, 'csv')
         experiment_name = f.partition('_moments')[0]
         df = pd.read_csv(data_dir+f)
-        varied = get_columns_with_multiple_unique_values(df.iloc[:,1:14])#Only the independent variables, ignore index column
+        varied = get_columns_with_multiple_unique_values(df.iloc[:,1:-4])#Only the independent variables, ignore 
         if len(varied) > 2:
             print(f'Moments file contains more than two independent variables, cannot automatically plot comparisons: {f}')
             continue
         elif len(varied) == 2:
-            compare(f, experiment_name, l_var=varied[0], x_var=varied[1], y_var=y_var, save=save, show=show, data_dir=data_dir)
-            compare(f, experiment_name, l_var=varied[1], x_var=varied[0], y_var=y_var, save=save, show=show, data_dir=data_dir)
+            plot_two_var(f, experiment_name, l_var=varied[0], x_var=varied[1], y_var=y_var, save=save, show=show, data_dir=data_dir)
+            plot_two_var(f, experiment_name, l_var=varied[1], x_var=varied[0], y_var=y_var, save=save, show=show, data_dir=data_dir)
         elif len(varied) == 1:
             plot_one_var(f, experiment_name, x_var=varied[0], y_var=y_var, save=save, show=show, data_dir=data_dir)
 
