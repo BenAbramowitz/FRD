@@ -32,6 +32,6 @@ def get_moments(filename, param_names, save=True):
     analyzed = [list(params) + four_moments(agreements) for params, agreements in data.items()]
     df = pd.DataFrame(analyzed, columns = param_names+['mean','variance','skew','kurtosis'])
     if save == True: 
-        filename = filename[0:-5]+'_moments.csv'
+        filename = filename.partition('_data')[0]+'_moments.csv'
         df.to_csv(os.path.join(path, filename))
     return df
