@@ -2,6 +2,9 @@ import numpy as np
 from typing import Tuple, Callable #to type hint tuples
 # import itertools
 # import copy
+
+import whalrus
+
 from . import m00_helper as helper
 from . import m01_profiles as profiles
 
@@ -19,30 +22,30 @@ def random_winners(cands, n_winners, seed=None)->Tuple[np.ndarray, np.ndarray]:
         raise ValueError(f'Cannot elect {n_winners} reps with only {len(cands)} cands')
     return np.random.choice(cands, n_winners, replace=False), np.ones(len(cands)) #election_scores are uniform
 
-def score_ordermaps(profile:profiles.Profile, score_vector:np.ndarray)->Tuple[np.ndarray, np.ndarray]:
-    '''
-    Given an ordermap and a score_vector, return a vector of the scores of the candidates
+# def score_ordermaps(profile:profiles.Profile, score_vector:np.ndarray)->Tuple[np.ndarray, np.ndarray]:
+#     '''
+#     Given an ordermap and a score_vector, return a vector of the scores of the candidates
     
-    PARAMS:
-    profile (np.ndarray): Profile object with ordermaps attribute (dict of 1D numpy arrays)
-                            The value ordermap[i][j] is the rank voter i gives to cand j
-    score_vector (np.ndarray): 1D array of numbers of score increase a cand gets based on the rank a voter gives them
+#     PARAMS:
+#     profile (np.ndarray): Profile object with ordermaps attribute (dict of 1D numpy arrays)
+#                             The value ordermap[i][j] is the rank voter i gives to cand j
+#     score_vector (np.ndarray): 1D array of numbers of score increase a cand gets based on the rank a voter gives them
     
-    NOTES
-    -----
-    Currently using nested for loops which is very slow but easy to read and debug
-    '''
-    n_cands = profile.get_n_cands() #vars(profile)['n_cands']
-    ordermaps = profile.get_ordermaps() #vars(profile)['ordermaps']
+#     NOTES
+#     -----
+#     Currently using nested for loops which is very slow but easy to read and debug
+#     '''
+#     n_cands = profile.get_n_cands() #vars(profile)['n_cands']
+#     ordermaps = profile.get_ordermaps() #vars(profile)['ordermaps']
 
-    if n_cands != len(score_vector):
-        raise ValueError('Score vector {score_vector} has length not equal to num cands: {n_cands}')
-    scores = np.zeros_like(score_vector)
+#     if n_cands != len(score_vector):
+#         raise ValueError('Score vector {score_vector} has length not equal to num cands: {n_cands}')
+#     scores = np.zeros_like(score_vector)
 
-    for ordermap in ordermaps.values():
-        for c_id, rank in enumerate(ordermap):
-            scores[c_id] += score_vector[rank]
-    return scores
+#     for ordermap in ordermaps.values():
+#         for c_id, rank in enumerate(ordermap):
+#             scores[c_id] += score_vector[rank]
+#     return scores
 
 def score_orders(profile, score_vector)->np.ndarray:
     '''
@@ -63,8 +66,8 @@ def score_orders(profile, score_vector)->np.ndarray:
     -----
     Rewrite to run faster. Currently using nested for loops which are easy to read, but slow.
     '''
-    n_cands = profile.get_n_cands() #vars(profile)['n_cands']
-    orders = profile.get_orders() #vars(profile)['orders']
+    n_cands = profile.get_n_cands()
+    orders = profile.get_orders()
 
     if n_cands != len(score_vector):
         raise ValueError(f'Score vector {score_vector} has length not equal to num cands: {n_cands}')
@@ -89,7 +92,7 @@ def plurality(profile:profiles.Profile, n_winners:int, seed=None)->Tuple[np.ndar
     Applies plurality voting to elect top n_winners cands with highest plurality scores, breaking ties randomly
     Score vector is [1, 0, 0, ...., 0]
     '''
-    n_cands = profile.get_n_cands() #vars(profile)['n_cands']
+    n_cands = profile.get_n_cands()
     score_vector = np.zeros(n_cands, dtype=int)
     score_vector[0] += 1
     winners, scores = scoring_rule(profile, score_vector, n_winners, seed)
@@ -105,28 +108,19 @@ def borda(profile:profiles.Profile, n_winners:int, seed=None)->Tuple[np.ndarray,
     winners, scores = scoring_rule(profile, score_vector, n_winners, seed)
     return winners, scores
 
-# def stv_whalrus(profile:profiles.Profile, n_winners:int, seed=None):
-#     orders = vars(profile)['orders'].values()
-#     whalrus_order = whalrus.BallotOrder(orders) #?
-#     total_order = whalrus.RuleIRV(whalrus_order, tie_break=whalrus.Priority.RANDOM).strict_order_
-#     winners = total_order[:n_winners]
-#     return winners
-
 def max_approval(profile:profiles.Profile, n_winners:int, seed=None)->Tuple[np.ndarray, np.ndarray]:
     '''
     Elects the n_winners cands with the most total approvals from voters, breaking ties randomly
     '''
     approval_indicators = list(profile.get_approval_indicators().values())
-    #print(f'\n\napprovals_indicators: {approval_indicators}')
     approval_counts = np.sum(np.vstack(approval_indicators), axis=0)
-    # print(f'approval counts: {approval_counts}')
     winners = helper.array1D_to_sorted(approval_counts, seed)[:,2][-n_winners:]
     return winners, approval_counts
 
 def rav(profile:profiles.Profile, n_winners:int)->Tuple[np.ndarray, np.ndarray]:
     '''
     Implements Repeated Alternative Vote with lexicographic teibreaking
-    The election scores are approval counts, determinedby the profile not really by the rule
+    The election scores are approval counts, determined by the profile not really by the rule
     '''
     n_cands = profile.get_n_cands()
     candidates = list(range(n_cands))
@@ -159,13 +153,18 @@ def max_agreement(profile, n_winners, seed=None)->Tuple[np.ndarray, np.ndarray]:
     Rename, because the scores from voters do not have to be equal to agreements with cands
     
     '''
-    agreements = list(profile.get_agreements().values()) # agreements = list(vars(profile)['agreements'].values())
+    agreements = list(profile.get_agreements().values())
     agreement_sums = np.sum(np.vstack(agreements), axis=0)
     augmented_agreements = helper.array1D_to_sorted(agreement_sums, seed)
     agreements_tiebroken = augmented_agreements[:,0]
     winners = augmented_agreements[:,2][-n_winners:].astype(int)
-    #print(f"max_agreement winners: {winners}")
     return winners, agreement_sums
+
+def irv_whalrus(profile, n_winners)->Tuple[np.ndarray, np.ndarray]:
+    whalrus_orders = profile.get_whalrus_orders()
+    rule = whalrus.RuleIRV(whalrus_orders, tie_break=whalrus.Priority.RANDOM)
+    return rule.strict_order_[:n_winners], np.ones(profile.get_n_cands()) #election_scores are uniform
+
 
 def rule_dispatcher(rule_name:str)->Callable:
     '''
@@ -185,5 +184,7 @@ def rule_dispatcher(rule_name:str)->Callable:
         return rav
     elif rule_name.lower() == 'max_agreement':
         return max_agreement
+    elif rule_name.lower() =='irv':
+        return irv_whalrus
     else:
         raise ValueError(f'Unable to dispatch rule: {rule_name}')
