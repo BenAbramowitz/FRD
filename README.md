@@ -51,7 +51,6 @@ An instance of an FRD problem consists of three sequential components: (1) creat
 - Delegations for FRD currently implemented using nested for loops, making them slow. Can speed up later if needed.
 
 ## To Do
-- Add experiments for FRD
+- Add experiments for FRD to config
 - Complete unit testing (in test_frd.py)
 - Add Chamberlain Courant and k-Medians
-- Add function for generating plots from all available data
