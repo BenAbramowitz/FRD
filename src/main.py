@@ -22,6 +22,7 @@ if __name__ == '__main__':
 
     save=True
     timer=True
+    n_iter = 1
     np.random.seed(1)
 
     for experiment_name in experiments.keys():
@@ -29,7 +30,7 @@ if __name__ == '__main__':
         print('-----------------------------')
         print('Experiment', experiment_name)
         experiment_params = experiments[experiment_name]
-        n_iter = 1#experiment_params["n_iter"]
+        #experiment_params["n_iter"]
         profile_param_vals = experiment_params["profile_param_vals"]
         election_param_vals = experiment_params["election_param_vals"]
         del_voting_param_vals = experiment_params["del_voting_param_vals"]
