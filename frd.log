@@ -1,0 +1,8 @@
+2023-07-13 15:41:44,448 m05_simulate | sim_parallel | Saving agreements data to file using pickle
+2023-07-13 15:41:44,449 main | main | Experiment data saved to RD_reps_data using pickle
+2023-07-13 15:41:44,482 main | main | Moments computed and saved as csv
+2023-07-13 15:41:44,485 m07_plot | plot_two_var | Creating two line plots for experiment RD_reps
+2023-07-13 15:41:44,766 m07_plot | plot_two_var | Creating two line plots for experiment RD_reps
+2023-07-13 15:41:44,916 main | main | Plots created for mean agreement
+2023-07-13 15:41:44,916 main | main | Total runtime: 5.441482125
+2023-07-13 15:41:44,916 main | main | Avg runtime per iteration: 5.441482125

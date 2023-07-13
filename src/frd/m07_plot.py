@@ -5,6 +5,7 @@ import numpy as np
 from pathlib import Path
 from os import listdir
 from os.path import isfile, join
+import logging
 
 from . import m00_helper as helper
 
@@ -130,6 +131,7 @@ def create_subtitle(x_var:str, y_var:str, params:dict):
 
 
 def plot_one_var(filename, experiment_name, x_var:str, y_var='mean', save=True, show=False, data_dir='./data/'):
+    logging.info(f'Creating one line plot for experiment {experiment_name}')
     check_filetype(filename, 'csv')
     df = pd.read_csv(data_dir+filename)
     df[x_var] = df[x_var].apply(lambda x: var_to_title(x))
@@ -147,6 +149,7 @@ def plot_one_var(filename, experiment_name, x_var:str, y_var='mean', save=True, 
         plt.show()
 
 def plot_two_var(filename, experiment_name, l_var:str, x_var:str, y_var='mean', save=True, show=False, data_dir='./data/'):
+    logging.info(f'Creating two line plots for experiment {experiment_name}')
     check_filetype(filename, 'csv')
     df = pd.read_csv(data_dir+filename)
     df[l_var] = df[l_var].apply(lambda x: var_to_title(x))

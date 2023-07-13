@@ -1,5 +1,6 @@
 import multiprocessing as mp
 from multiprocessing import Pool
+import logging
 
 from . import m00_helper as helper
 from . import m01_profiles as profiles
@@ -35,11 +36,13 @@ def single_iter(profile_param_vals:tuple, election_param_vals:dict, del_voting_p
         prof = profiles.Profile(n_voters, n_cands, n_issues, voters_p, cands_p, app_k, app_thresh)
         election_rules = election_param_vals.get('election_rules')
         prof.new_instance(**profiles_needed(election_rules)) # derive only the election profiles necessary
+        logging.debug(f'New profile created with params: {profile_params}')
 
         for election_params in helper.params_dict_to_tuples(election_param_vals)[0]:
             # elect reps to get rep_ids and election_scores (if election rule provides scores)
             election_rule_name, n_reps = election_params
             if n_reps > n_cands: continue #skip nonsenical case where number of reps to elect is greater than number of cands
+            logging.debug(f'New election being run: {election_rule_name} with {n_reps} reps')
 
             #create rd and frd objects to be reused where necessary, depending on delegation params. Run elections only once per iter
             made_rd=False
@@ -54,6 +57,7 @@ def single_iter(profile_param_vals:tuple, election_param_vals:dict, del_voting_p
                 else: frd.elect_reps()
             
             for del_voting_params in helper.params_dict_to_tuples(del_voting_param_vals)[0]:
+                logging.debug(f'Running RD or delegative voting with params: {del_voting_params}')
                 default, del_style, best_k, n_delegators = del_voting_params
                 if n_delegators and n_delegators > n_voters: continue #skip nonsensical case
                 if best_k and best_k > n_reps: continue #skip nonsensical case
@@ -71,11 +75,12 @@ def single_iter_unpacker(args):
 
 def sim_parallel(n_iter:int, profile_param_vals:dict, election_param_vals:dict, del_voting_param_vals:dict, save:bool=True, experiment_name=None, data_dir='./data/'):
     data = {}
-    print(f'Parallelizing iterations on up to {mp.cpu_count()-1} CPUs')
+    logging.info(f'Parallelizing iterations on up to {mp.cpu_count()-1} CPUs')
     with Pool(mp.cpu_count()-1) as pool:
         for iter_data in pool.imap_unordered(single_iter_unpacker, [[profile_param_vals, election_param_vals, del_voting_param_vals]]*n_iter):
             helper.append_dict_values(data, iter_data)
     if save:
+        logging.info('Saving agreements data to file using pickle')
         experiment_params = helper.merge_dicts([profile_param_vals, election_param_vals, del_voting_param_vals])
         param_names = helper.params_dict_to_tuples(experiment_params)[1]
         filename = save_data.pickle_data(data, experiment_params, experiment_name=experiment_name,data_dir=data_dir)

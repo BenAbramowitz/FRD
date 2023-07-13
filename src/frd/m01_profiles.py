@@ -1,6 +1,7 @@
 from typing import Tuple #to type hint tuples
-import numpy as np
+import logging
 
+import numpy as np
 import whalrus
 
 from . import m00_helper as helper
@@ -63,6 +64,10 @@ class Profile():
         '''
         Compute the (unweighted) voter majority on every issue with random tiebreaking
         Tiebreaking only occurs if n_voters is even
+
+        TODO
+        ------
+        Speed up by removing for loop and just using array operations
         '''
         self.voter_majority_outcomes = np.random.binomial(1, 0.5, size=(self.n_issues)) #initialized randomly so unchanged vals break ties randomly
         for i in range(self.n_issues):
@@ -187,14 +192,19 @@ class Profile():
         self.voter_majority_vote()
         if approvals: 
             self.distances_to_approvals() #used for max_approval
+            logging.debug('created approvals')
             self.approvals_to_indicators() #used for rav
+            logging.debug('created approval indicators')
         if ordinals:
             self.distances_to_orders() #used for scoring rules, e.g. Borda and Plurality
+            logging.debug('created pref orders')
             # self.orders_to_ordermaps()
             if whalrus_orders:
                 self.orders_to_whalrus()
+                logging.debug('created whalrus orders')
         if agreements:
             self.distances_to_agreements() #used for max_agreement
+            logging.debug('created agreement prefs for election (1- distances)')
         return vars(self)
 
 

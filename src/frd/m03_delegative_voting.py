@@ -1,5 +1,6 @@
 import numpy as np
 import copy
+import logging
 
 from . import m00_helper as helper
 from . import m01_profiles as profiles
@@ -92,9 +93,11 @@ class RD():
         agreement = fraction of issues on which the outcome is the same = 1 - (normalized Hamming distance)
         '''
         if self.default == 'uniform':
+            logging.debug(f'RD with uniform default, no delegation. Using majority voting to get rep outcomes')
             rep_outcomes = majority(self.rep_prefs)
         elif self.default == 'election_scores':
                 #Give reps their election scores and all other cands zero, then take weighted_majority vote
+                logging.debug(f'RD with election scores default, no delegation. Using weighted majority voting to get rep outcomes')
                 rep_weights = [self.cand_election_scores[c] if c in self.rep_ids else 0 for c in range(self.n_cands)]
                 rep_outcomes = weighted_majority(self.rep_prefs, rep_weights)
         else:
@@ -104,6 +107,7 @@ class RD():
         return float(agreement)
     
     def run_RD(self, quick=False)->float:
+        logging.debug(f'run_RD running with quick set to {quick}')
         if quick == False:
             self.elect_reps()
             self.pull_rep_prefs()
@@ -113,9 +117,6 @@ class RD():
 
     def set_election_rule(self, rule:str):
         self.election_rule = rules.rule_dispatcher(rule)
-
-    # def set_profile(self, profile):
-    #     self.profile = profile
 
     def set_n_reps(self, n_reps):
         self.n_reps = n_reps
