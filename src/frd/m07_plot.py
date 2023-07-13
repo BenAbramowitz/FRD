@@ -18,11 +18,12 @@ def check_filetype(filename, filetype='csv'):
         raise ValueError(f'File {filename} is not of correct type. Need {filetype}')
     
 def var_to_title(s):
-    if type(s) is not str:
-        return s
+    if type(s) is not str: return s
+    elif s.lower() in ['rav', 'irv']: return s.upper() #handle known acronyms
+    elif s.lower() == 'cands_p': return 'Cands p' #handle case where p is Bernoulli parameter
+    elif s.lower() == 'voters_p': return 'Voters p' #handle case where p is Bernoulli parameter
     s = s.replace('_', ' ')
-    if s.lower() in ['rav', 'irv']: return s.upper() #handle known acronyms
-    if s.lower() in ['Cands p', 'Voters p']: return s.lower() #handle case where p is Bernoulli parameter
+    if s[0:2] == 'n ': return s[2:].title() #handle cases where var is number of something
     return s.title()
 
 
@@ -67,14 +68,14 @@ def label_plot(x_var, y_var):
         x_label = "Approval Threshold"
     elif x_var.lower() == "default_style":
         x_label = "Default Weighting"
-    # elif x_var.lower() == "default_params":
-    #     x_label = "Default Parameter"
     elif x_var.lower() == "del_style":
         x_label = "Delegation Style"
     elif x_var.lower() == "best_k":
         x_label = "Best k"
     elif x_var.lower() == "n_delegators":
         x_label = "Number of Delegators"
+    elif x_var.lower() == "election_rules":
+        x_label = ""
 
     title += x_label
 
@@ -141,6 +142,7 @@ def plot_one_var(filename, experiment_name, x_var:str, y_var='mean', save=True, 
     if save:
         fig = p.get_figure()
         fig.savefig('./plots/'+experiment_name+'_'+y_var+'_vs_'+x_var)
+        if not show: plt.close(fig)
     if show:
         plt.show()
 
@@ -173,7 +175,15 @@ def plot_two_var(filename, experiment_name, l_var:str, x_var:str, y_var='mean', 
     
 
 def plot_moments(momentsfile:str, y_var:str='mean', save:bool=True, show:bool=False, data_dir:str='./data/'):
-    #determine if one var or two far then call the correct plotting function
+    '''
+    Given file with moments data and a y_var, create a plot showing the behavior of the independent variable(s)
+
+    TODO
+    -----
+    determine if one var or two far then call the correct plotting function
+    Call this in compare_all to simplify
+    '''
+    #
     pass
 
 
@@ -197,7 +207,7 @@ def compare_all(data_dir='./data/', y_var='mean', save=True, show=True)->None:
         check_filetype(f, 'csv')
         experiment_name = f.partition('_moments')[0]
         df = pd.read_csv(data_dir+f)
-        varied = get_columns_with_multiple_unique_values(df.iloc[:,1:-4])#Only the independent variables, ignore 
+        varied = get_columns_with_multiple_unique_values(df.iloc[:,1:-4])#Only the independent variables, ignore index column
         if len(varied) > 2:
             print(f'Moments file contains more than two independent variables, cannot automatically plot comparisons: {f}')
             continue
@@ -207,7 +217,7 @@ def compare_all(data_dir='./data/', y_var='mean', save=True, show=True)->None:
         elif len(varied) == 1:
             plot_one_var(f, experiment_name, x_var=varied[0], y_var=y_var, save=save, show=show, data_dir=data_dir)
 
-def get_columns_with_multiple_unique_values(df)->list:
+def get_columns_with_multiple_unique_values(df:pd.DataFrame)->list:
     '''
     Given a DataFrame return names of columns that contain more than one value
 
