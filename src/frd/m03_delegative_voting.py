@@ -51,16 +51,13 @@ class RD():
         self.profile = profile
         self.election_rule = rules.rule_dispatcher(election_rule)
         self.n_reps = n_reps
+        self.n_cands = self.profile.get_n_cands()
         self.rep_ids = []
         self.delegator_ids = []
         self.rep_prefs = None
         self.default = default
         self.cand_election_scores = None
         self.voter_majority_outcomes = profile.get_voter_majority()
-    
-    def voter_majority_vote(self):
-        self.voter_majority_outcomes = self.profile.get_voter_majority()
-        return self.voter_majority_outcomes
 
     def elect_reps(self):
         '''
@@ -75,7 +72,7 @@ class RD():
         if self.election_rule is None:
             raise ValueError('Election rule is currently None, func elect_reps cannot elect reps')
         elif self.election_rule == rules.random_winners:
-            self.rep_ids, self.cand_election_scores = self.election_rule(range(self.profile.get_n_cands()), self.n_reps)
+            self.rep_ids, self.cand_election_scores = self.election_rule(range(self.n_cands), self.n_reps)
         else:
             self.rep_ids, self.cand_election_scores = self.election_rule(self.profile, self.n_reps)
         return self.rep_ids, self.cand_election_scores, self.rep_prefs
@@ -98,18 +95,18 @@ class RD():
             rep_outcomes = majority(self.rep_prefs)
         elif self.default == 'election_scores':
                 #Give reps their election scores and all other cands zero, then take weighted_majority vote
-                rep_weights = [self.cand_election_scores[c] if c in self.rep_ids else 0 for c in range(self.profile.get_n_cands())]
+                rep_weights = [self.cand_election_scores[c] if c in self.rep_ids else 0 for c in range(self.n_cands)]
                 rep_outcomes = weighted_majority(self.rep_prefs, rep_weights)
         else:
             raise ValueError(f'Default weighting not implemented: {self.default}')
 
-        agreement = np.count_nonzero(rep_outcomes == self.profile.get_voter_majority()) / len(rep_outcomes)
+        agreement = np.count_nonzero(rep_outcomes == self.voter_majority_outcomes) / len(rep_outcomes)
         return float(agreement)
     
-    def run_RD(self)->float:
-        self.elect_reps()
-        self.pull_rep_prefs()
-        self.voter_majority_vote()
+    def run_RD(self, quick=False)->float:
+        if quick == False:
+            self.elect_reps()
+            self.pull_rep_prefs()
         return self.outcome_agreement()
 
     ### Setters
@@ -117,8 +114,8 @@ class RD():
     def set_election_rule(self, rule:str):
         self.election_rule = rules.rule_dispatcher(rule)
 
-    def set_profile(self, profile):
-        self.profile = profile
+    # def set_profile(self, profile):
+    #     self.profile = profile
 
     def set_n_reps(self, n_reps):
         self.n_reps = n_reps
@@ -138,7 +135,10 @@ class RD():
         return self.n_reps
 
     def get_default(self):
-        return self.defaul
+        return self.default
+    
+    def get_rep_ids(self):
+        return self.rep_ids
 
 
 class FRD():
@@ -159,20 +159,19 @@ class FRD():
         self.rep_ids = []
         self.weighting = {i:np.zeros((self.n_voters, self.n_cands)) for i in range(self.n_issues)}
         self.rep_weights = {i:np.zeros(self.n_cands) for i in range(self.n_issues)}
-
         self.voter_majority_outcomes = self.profile.get_voter_majority()
 
     def elect_reps(self):
         if self.election_rule == rules.random_winners:
-            self.rep_ids, self.cand_election_scores = self.election_rule(range(self.profile.get_n_cands()), self.n_reps)
+            self.rep_ids, self.cand_election_scores = self.election_rule(range(self.n_cands), self.n_reps)
         else:
             self.rep_ids, self.cand_election_scores = self.election_rule(self.profile, self.n_reps)
         return self.rep_ids, self.cand_election_scores
 
-    def pull_rep_prefs(self):
-        c_prefs = self.profile.get_issue_prefs()[1]
-        self.rep_prefs = c_prefs[self.rep_ids,:]
-        return self.rep_prefs
+    # def pull_rep_prefs(self):
+    #     c_prefs = self.profile.get_issue_prefs()[1]
+    #     self.rep_prefs = c_prefs[self.rep_ids,:]
+    #     return self.rep_prefs
 
     def default_weighting(self):
         '''
@@ -206,18 +205,21 @@ class FRD():
         If a voter is a delegator they give weight 1 to a rep who agrees with them on each issue and 0 to the rest.
         Weighting is issue-specific.
         If there is no rep who agrees with them on some issue (so reps are unanimous and voter disagrees), they stick with default
+
         '''
         v_prefs, c_prefs = self.profile.get_issue_prefs()
         self.select_n_delegators()
         # print(f'delegators: {self.delegator_ids}')
         for i in range(self.n_issues):
+            r0 = np.where(c_prefs[:,i] == 0)[0].tolist() #rep who votes 0 on this issue
+            r1 = np.where(c_prefs[:,i] == 1)[0].tolist() #rep who votes 1 on this issue
             for v in self.delegator_ids:
-                for r in self.rep_ids:
-                    if c_prefs[r,i] == v_prefs[v,i]:
-                        #print(f'Voter {v} delegates to rep {r} on issue {i}')
-                        self.weighting[i][v] = np.zeros(self.n_cands)
-                        self.weighting[i][v,r] = 1
-                        break
+                if r0 and v_prefs[v,i] == 0:
+                     self.weighting[i][v] = np.zeros(self.n_cands)
+                     self.weighting[i][v,r0[0]] = 1
+                elif r1 and v_prefs[v,i] == 1:
+                    self.weighting[i][v] = np.zeros(self.n_cands)
+                    self.weighting[i][v,r1[0]] = 1
         #print(f'Incisive weighting: {self.weighting}')
         return self.weighting
     
@@ -282,13 +284,23 @@ class FRD():
         rep_outcomes = self.weighted_majority()
         #print(f'rep_outcomes: {rep_outcomes}')
         if len(rep_outcomes) != self.n_issues: raise Exception('Num outcomes must be same as number of issues')
-        agreement = np.count_nonzero(rep_outcomes == self.profile.get_voter_majority()) / self.n_issues
+        agreement = np.count_nonzero(rep_outcomes == self.voter_majority_outcomes) / self.n_issues
         #print(f'agreement: {agreement}')
         return agreement
+    
+    def set_delegation_params(self, default, del_style, best_k, n_delegators):
+        self.default = default
+        self.del_style = del_style
+        self.best_k = best_k
+        self.n_delegators = n_delegators
 
-    def run_FRD(self):
-        self.elect_reps()
-        self.pull_rep_prefs()
+    def set_rep_ids(self, rep_ids):
+        self.rep_ids = rep_ids
+
+
+    def run_FRD(self, quick=False):
+        if quick == False:
+            self.elect_reps()
         self.weight_reps()
         agreement = self.outcome_agreement()
         return agreement
