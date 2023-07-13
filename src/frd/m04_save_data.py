@@ -100,8 +100,8 @@ def pickle_data(data:dict, experiment_params:dict=None, experiment_name:str = No
         pickle.dump(data, output_file)
     return filename
 
-def unpickle_data(filename)->dict:
-    with open('./data/'+filename, 'rb') as input_file:
+def unpickle_data(filename, data_dir='./data/')->dict:
+    with open(data_dir+filename, 'rb') as input_file:
         data = pickle.load(input_file)
     return data
 
