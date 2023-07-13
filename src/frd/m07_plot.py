@@ -184,7 +184,17 @@ def plot_moments(momentsfile:str, y_var:str='mean', save:bool=True, show:bool=Fa
     Call this in compare_all to simplify
     '''
     #
-    pass
+    check_filetype(momentsfile, 'csv')
+    experiment_name = momentsfile.partition('_moments')[0]
+    df = pd.read_csv(data_dir+momentsfile)
+    varied = get_columns_with_multiple_unique_values(df.iloc[:,1:-4])#Only the independent variables, ignore index column
+    if len(varied) > 2:
+        print(f'Moments file contains more than two independent variables, cannot automatically plot comparisons: {momentsfile}')
+    elif len(varied) == 2:
+        plot_two_var(momentsfile, experiment_name, l_var=varied[0], x_var=varied[1], y_var=y_var, save=save, show=show, data_dir=data_dir)
+        plot_two_var(momentsfile, experiment_name, l_var=varied[1], x_var=varied[0], y_var=y_var, save=save, show=show, data_dir=data_dir)
+    elif len(varied) == 1:
+        plot_one_var(momentsfile, experiment_name, x_var=varied[0], y_var=y_var, save=save, show=show, data_dir=data_dir)
 
 
 def compare_all(data_dir='./data/', y_var='mean', save=True, show=True)->None:
@@ -204,18 +214,19 @@ def compare_all(data_dir='./data/', y_var='mean', save=True, show=True)->None:
 
     #for each experiment, read in the data and plot based on number of idnependent variables
     for idx,f in enumerate(momentfiles):
-        check_filetype(f, 'csv')
-        experiment_name = f.partition('_moments')[0]
-        df = pd.read_csv(data_dir+f)
-        varied = get_columns_with_multiple_unique_values(df.iloc[:,1:-4])#Only the independent variables, ignore index column
-        if len(varied) > 2:
-            print(f'Moments file contains more than two independent variables, cannot automatically plot comparisons: {f}')
-            continue
-        elif len(varied) == 2:
-            plot_two_var(f, experiment_name, l_var=varied[0], x_var=varied[1], y_var=y_var, save=save, show=show, data_dir=data_dir)
-            plot_two_var(f, experiment_name, l_var=varied[1], x_var=varied[0], y_var=y_var, save=save, show=show, data_dir=data_dir)
-        elif len(varied) == 1:
-            plot_one_var(f, experiment_name, x_var=varied[0], y_var=y_var, save=save, show=show, data_dir=data_dir)
+        plot_moments(f, y_var=y_var, save=save, show=show, data_dir=data_dir)
+        # check_filetype(f, 'csv')
+        # experiment_name = f.partition('_moments')[0]
+        # df = pd.read_csv(data_dir+f)
+        # varied = get_columns_with_multiple_unique_values(df.iloc[:,1:-4])#Only the independent variables, ignore index column
+        # if len(varied) > 2:
+        #     print(f'Moments file contains more than two independent variables, cannot automatically plot comparisons: {f}')
+        #     continue
+        # elif len(varied) == 2:
+        #     plot_two_var(f, experiment_name, l_var=varied[0], x_var=varied[1], y_var=y_var, save=save, show=show, data_dir=data_dir)
+        #     plot_two_var(f, experiment_name, l_var=varied[1], x_var=varied[0], y_var=y_var, save=save, show=show, data_dir=data_dir)
+        # elif len(varied) == 1:
+        #     plot_one_var(f, experiment_name, x_var=varied[0], y_var=y_var, save=save, show=show, data_dir=data_dir)
 
 def get_columns_with_multiple_unique_values(df:pd.DataFrame)->list:
     '''
