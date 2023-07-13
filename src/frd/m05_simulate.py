@@ -55,6 +55,8 @@ def single_iter(profile_param_vals:tuple, election_param_vals:dict, del_voting_p
             
             for del_voting_params in helper.params_dict_to_tuples(del_voting_param_vals)[0]:
                 default, del_style, best_k, n_delegators = del_voting_params
+                if n_delegators and n_delegators > n_voters: continue #skip nonsensical case
+                if best_k and best_k > n_reps: continue #skip nonsensical case
                 if del_style is None: #RD
                     rd.set_default(default)
                     agreement = rd.run_RD(quick=True)
@@ -67,7 +69,7 @@ def single_iter(profile_param_vals:tuple, election_param_vals:dict, del_voting_p
 def single_iter_unpacker(args):
     return single_iter(*args)
 
-def sim_parallel(n_iter:int, profile_param_vals:dict, election_param_vals:dict, del_voting_param_vals:dict, save:bool=True, experiment_name=None):
+def sim_parallel(n_iter:int, profile_param_vals:dict, election_param_vals:dict, del_voting_param_vals:dict, save:bool=True, experiment_name=None, data_dir='./data/'):
     data = {}
     print(f'Parallelizing iterations on up to {mp.cpu_count()-1} CPUs')
     with Pool(mp.cpu_count()-1) as pool:
@@ -76,7 +78,7 @@ def sim_parallel(n_iter:int, profile_param_vals:dict, election_param_vals:dict, 
     if save:
         experiment_params = helper.merge_dicts([profile_param_vals, election_param_vals, del_voting_param_vals])
         param_names = helper.params_dict_to_tuples(experiment_params)[1]
-        filename = save_data.pickle_data(data, experiment_params, experiment_name=experiment_name)
+        filename = save_data.pickle_data(data, experiment_params, experiment_name=experiment_name,data_dir=data_dir)
         return data, param_names, n_iter, experiment_params, filename
     return data
 
