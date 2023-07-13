@@ -1,233 +1,296 @@
 {
     "RD_cands_p":{
         "profile_param_vals":{
-            "n_voters":[501],
-            "n_cands":[100],
-            "n_issues":[150],
+            "n_voters":[100],
+            "n_cands":[60],
+            "n_issues":[200],
             "voters_p":[0.5],
             "cands_p":[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],
             "app_k":[100],
             "app_thresh":[0.5]
         },
         "election_param_vals":{
-            "election_rules":["max_approval","borda","plurality","rav", "max_agreement", "random_winners"],
+            "election_rules":["max_approval","borda","plurality","rav", "irv","max_agreement", "random_winners"],
             "n_reps":[21]
         },
         "del_voting_param_vals":{
             "default_style":["uniform"],
-            "default_params":[null],
             "delegation_style":[null],
-            "delegation_params":[null]
+            "best_k":[null],
+            "n_delegators":[null]
         }
     },
     "RD_cands_p_biased":{
         "profile_param_vals":{
-            "n_voters":[501],
-            "n_cands":[100],
-            "n_issues":[150],
+            "n_voters":[100],
+            "n_cands":[60],
+            "n_issues":[200],
             "voters_p":[0.6],
             "cands_p":[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],
             "app_k":[100],
             "app_thresh":[0.5]
         },
         "election_param_vals":{
-            "election_rules":["max_approval","borda","plurality","rav", "max_agreement", "random_winners"],
+            "election_rules":["max_approval","borda","plurality","rav", "irv","max_agreement", "random_winners"],
             "n_reps":[21]
         },
         "del_voting_param_vals":{
             "default_style":["uniform"],
-            "default_params":[null],
             "delegation_style":[null],
-            "delegation_params":[null]
+            "best_k":[null],
+            "n_delegators":[null]
         }
     },
-    "1a":{
+    "RD_issues":{
         "profile_param_vals":{
-            "n_voters":[501],
+            "n_voters":[100],
             "n_cands":[60],
             "n_issues":[10,20,30,40,50,60,70,80,90,100,110,120,130,140,150],
-            "voters_p":[0.5],
-            "cands_p":[0.5],
-            "app_k":[60],
-            "app_thresh":[0.5]
-        },
-        "election_param_vals":{
-            "election_rules":["max_approval","borda","plurality","rav", "max_agreement", "random_winners","irv"],
-            "n_reps":[21]
-        },
-        "del_voting_param_vals":{
-            "default_style":["uniform"],
-            "default_params":[null],
-            "delegation_style":[null],
-            "delegation_params":[null]
-        }
-    },
-    "1b":{
-        "profile_param_vals":{
-            "n_voters":[501],
-            "n_cands":[100],
-            "n_issues":[150],
             "voters_p":[0.5],
             "cands_p":[0.5],
             "app_k":[100],
             "app_thresh":[0.5]
         },
         "election_param_vals":{
-            "election_rules":["max_approval","borda","plurality","rav", "max_agreement", "random_winners"],
-            "n_reps":[10,20,30,40,50,60,70,80,90,100]
+            "election_rules":["max_approval","borda","plurality","rav", "irv","max_agreement", "random_winners"],
+            "n_reps":[21]
         },
         "del_voting_param_vals":{
             "default_style":["uniform"],
-            "default_params":[null],
             "delegation_style":[null],
-            "delegation_params":[null]
+            "best_k":[null],
+            "n_delegators":[null]
         }
     },
-    "1c":{
+    "RD_reps":{
         "profile_param_vals":{
-            "n_voters":[501],
-            "n_cands":[10,20,30,40,50,60,70,80,90,100],
-            "n_issues":[150],
+            "n_voters":[100],
+            "n_cands":[60],
+            "n_issues":[200],
             "voters_p":[0.5],
             "cands_p":[0.5],
             "app_k":[100],
             "app_thresh":[0.5]
         },
         "election_param_vals":{
-            "election_rules":["max_approval","borda","plurality","rav", "max_agreement", "random_winners"],
+            "election_rules":["max_approval","borda","plurality","rav", "irv","max_agreement", "random_winners"],
+            "n_reps":[10,20,30,40,50,60]
+        },
+        "del_voting_param_vals":{
+            "default_style":["uniform"],
+            "delegation_style":[null],
+            "best_k":[null],
+            "n_delegators":[null]
+        }
+    },
+    "RD_cands":{
+        "profile_param_vals":{
+            "n_voters":[100],
+            "n_cands":[30,40,50,60,70,80,90,100],
+            "n_issues":[200],
+            "voters_p":[0.5],
+            "cands_p":[0.5],
+            "app_k":[100],
+            "app_thresh":[0.5]
+        },
+        "election_param_vals":{
+            "election_rules":["max_approval","borda","plurality","rav", "irv","max_agreement", "random_winners"],
             "n_reps":[21]
         },
         "del_voting_param_vals":{
             "default_style":["uniform"],
-            "default_params":[null],
             "delegation_style":[null],
-            "delegation_params":[null]
+            "best_k":[null],
+            "n_delegators":[null]
         }
     },
-    "1a_polarized":{
+    "RD_issues_polarized":{
         "profile_param_vals":{
-            "n_voters":[501],
+            "n_voters":[100],
             "n_cands":[60],
             "n_issues":[10,20,30,40,50,60,70,80,90,100,110,120,130,140,150],
             "voters_p":[0.6],
             "cands_p":[0.4],
-            "app_k":[60],
+            "app_k":[100],
             "app_thresh":[0.5]
         },
         "election_param_vals":{
-            "election_rules":["max_approval","borda","plurality","rav", "max_agreement", "random_winners"],
+            "election_rules":["max_approval","borda","plurality","rav", "irv","max_agreement", "random_winners"],
             "n_reps":[21]
         },
         "del_voting_param_vals":{
             "default_style":["uniform"],
-            "default_params":[null],
             "delegation_style":[null],
-            "delegation_params":[null]
+            "best_k":[null],
+            "n_delegators":[null]
         }
     },
-    "1b_polarized":{
+    "RD_reps_polarized":{
         "profile_param_vals":{
-            "n_voters":[501],
-            "n_cands":[100],
-            "n_issues":[150],
+            "n_voters":[100],
+            "n_cands":[60],
+            "n_issues":[200],
             "voters_p":[0.6],
             "cands_p":[0.4],
             "app_k":[100],
             "app_thresh":[0.5]
         },
         "election_param_vals":{
-            "election_rules":["max_approval","borda","plurality","rav", "max_agreement", "random_winners"],
-            "n_reps":[10,20,30,40,50,60,70,80,90,100]
+            "election_rules":["max_approval","borda","plurality","rav", "irv","max_agreement", "random_winners"],
+            "n_reps":[10,20,30,40,50,60]
         },
         "del_voting_param_vals":{
             "default_style":["uniform"],
-            "default_params":[null],
             "delegation_style":[null],
-            "delegation_params":[null]
+            "best_k":[null],
+            "n_delegators":[null]
         }
     },
-    "1c_polarized":{
+    "RD_cands_polarized":{
         "profile_param_vals":{
-            "n_voters":[501],
+            "n_voters":[100],
             "n_cands":[10,20,30,40,50,60,70,80,90,100],
-            "n_issues":[150],
+            "n_issues":[200],
             "voters_p":[0.6],
             "cands_p":[0.4],
             "app_k":[100],
             "app_thresh":[0.5]
         },
         "election_param_vals":{
-            "election_rules":["max_approval","borda","plurality","rav", "max_agreement", "random_winners"],
+            "election_rules":["max_approval","borda","plurality","rav", "irv","max_agreement", "random_winners"],
             "n_reps":[21]
         },
         "del_voting_param_vals":{
             "default_style":["uniform"],
-            "default_params":[null],
             "delegation_style":[null],
-            "delegation_params":[null]
+            "best_k":[null],
+            "n_delegators":[null]
         }
     },
-    "1a_similar":{
+    "RD_issues_similar":{
         "profile_param_vals":{
-            "n_voters":[501],
+            "n_voters":[100],
             "n_cands":[60],
             "n_issues":[10,20,30,40,50,60,70,80,90,100,110,120,130,140,150],
             "voters_p":[0.6],
             "cands_p":[0.6],
-            "app_k":[60],
+            "app_k":[100],
             "app_thresh":[0.5]
         },
         "election_param_vals":{
-            "election_rules":["max_approval","borda","plurality","rav", "max_agreement", "random_winners"],
+            "election_rules":["max_approval","borda","plurality","rav", "irv","max_agreement", "random_winners"],
             "n_reps":[21]
         },
         "del_voting_param_vals":{
             "default_style":["uniform"],
-            "default_params":[null],
             "delegation_style":[null],
-            "delegation_params":[null]
+            "best_k":[null],
+            "n_delegators":[null]
         }
     },
-    "1b_similar":{
+    "RD_reps_similar":{
         "profile_param_vals":{
-            "n_voters":[501],
-            "n_cands":[100],
-            "n_issues":[150],
+            "n_voters":[100],
+            "n_cands":[60],
+            "n_issues":[200],
             "voters_p":[0.6],
             "cands_p":[0.6],
             "app_k":[100],
             "app_thresh":[0.5]
         },
         "election_param_vals":{
-            "election_rules":["max_approval","borda","plurality","rav", "max_agreement", "random_winners"],
-            "n_reps":[10,20,30,40,50,60,70,80,90,100]
+            "election_rules":["max_approval","borda","plurality","rav", "irv","max_agreement", "random_winners"],
+            "n_reps":[10,20,30,40,50,60]
         },
         "del_voting_param_vals":{
             "default_style":["uniform"],
-            "default_params":[null],
             "delegation_style":[null],
-            "delegation_params":[null]
+            "best_k":[null],
+            "n_delegators":[null]
         }
     },
-    "1c_similar":{
+    "RD_cands_similar":{
         "profile_param_vals":{
-            "n_voters":[501],
+            "n_voters":[100],
             "n_cands":[10,20,30,40,50,60,70,80,90,100],
-            "n_issues":[150],
+            "n_issues":[200],
             "voters_p":[0.6],
             "cands_p":[0.6],
             "app_k":[100],
             "app_thresh":[0.5]
         },
         "election_param_vals":{
-            "election_rules":["max_approval","borda","plurality","rav", "max_agreement", "random_winners"],
+            "election_rules":["max_approval","borda","plurality","rav", "irv","max_agreement", "random_winners"],
             "n_reps":[21]
         },
         "del_voting_param_vals":{
             "default_style":["uniform"],
-            "default_params":[null],
             "delegation_style":[null],
-            "delegation_params":[null]
+            "best_k":[null],
+            "n_delegators":[null]
+        }
+    },
+    "FRD_incisive_borda_del_rate":{
+        "profile_param_vals":{
+            "n_voters":[100],
+            "n_cands":[60],
+            "n_issues":[200],
+            "voters_p":[0.5],
+            "cands_p":[0.5],
+            "app_k":[100],
+            "app_thresh":[0.5]
+        },
+        "election_param_vals":{
+            "election_rules":["borda"],
+            "n_reps":[21]
+        },
+        "del_voting_param_vals":{
+            "default_style":["uniform"],
+            "delegation_style":["incisive"],
+            "best_k":[null],
+            "n_delegators":[0,10,20,30,40,50,60,70,80,90,100]
+        }
+    },
+    "FRD_bestk_borda_del_rate":{
+        "profile_param_vals":{
+            "n_voters":[100],
+            "n_cands":[60],
+            "n_issues":[200],
+            "voters_p":[0.5],
+            "cands_p":[0.5],
+            "app_k":[100],
+            "app_thresh":[0.5]
+        },
+        "election_param_vals":{
+            "election_rules":["borda"],
+            "n_reps":[21]
+        },
+        "del_voting_param_vals":{
+            "default_style":["uniform"],
+            "delegation_style":["best_k"],
+            "best_k":[1,3,5,7,9,11],
+            "n_delegators":[0,10,20,30,40,50,60,70,80,90,100]
+        }
+    },
+    "FRD_bestk":{
+        "profile_param_vals":{
+            "n_voters":[100],
+            "n_cands":[60],
+            "n_issues":[200],
+            "voters_p":[0.5],
+            "cands_p":[0.5],
+            "app_k":[100],
+            "app_thresh":[0.5]
+        },
+        "election_param_vals":{
+            "election_rules":["max_approval","borda","plurality","rav", "irv","max_agreement", "random_winners"],
+            "n_reps":[21]
+        },
+        "del_voting_param_vals":{
+            "default_style":["uniform"],
+            "delegation_style":["best_k"],
+            "best_k":[1,3,5,7,9,11],
+            "n_delegators":[100]
         }
     }
 }
