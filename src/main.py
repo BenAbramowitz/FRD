@@ -11,8 +11,7 @@ import frd.m05_simulate as simulate
 import frd.m06_analysis as analysis
 import frd.m07_plot as plot
 
-open('frd.log', 'w').close() #hack because filemode='w' was corrupting the log file for unknown reasons
-logging.basicConfig(filename='frd.log', encoding='UTF-8', format='%(asctime)s %(module)s | %(funcName)s | %(message)s', level=logging.INFO)
+
 
 '''
 NOTE: Currently, you want to vary only one independent variable per experiment if multiple rules are being compared. This makes life easier when it comes to plotting. More generally, you want to vary only one variable to place on the x-axis of the plot, and optionally one more variable (e.g. election rules) to plot multiple lines on that line plot.
@@ -20,11 +19,10 @@ NOTE: Currently, you want to vary only one independent variable per experiment i
 
 
 def main():
-    EXPERIMENTS = ['RD_reps'] #Set which experiments to run. Runs all if list is empty
-    N_ITER = 1
+    EXPERIMENTS = [] #Set which experiments to run. Runs all if list is empty
+    N_ITER = 1000
     save=True
     show=False
-    timer=True
     data_dir='./data/'
 
     p = Path(__file__).with_name('config.json')
@@ -44,7 +42,7 @@ def main():
         election_param_vals = experiment_params["election_param_vals"]
         del_voting_param_vals = experiment_params["del_voting_param_vals"]
     
-        if timer: start = time.perf_counter()
+        start = time.perf_counter()
 
         #run simulation for this experiment
         data, param_names, n_iter, experiment_params, filename = simulate.sim_parallel(N_ITER, 
@@ -59,10 +57,9 @@ def main():
             logging.info('Plots created for mean agreement')
         
         #Report runtime
-        if timer:
-            end = time.perf_counter()
-            logging.info(f'Total runtime: {end-start}')
-            logging.info(f'Avg runtime per iteration: {(end-start)/n_iter}')
+        end = time.perf_counter()
+        logging.info(f'Total runtime: {end-start}')
+        logging.info(f'Avg runtime per iteration: {(end-start)/n_iter}')
 
     #Create plots for all data in the data folder and save/show them
     # if save: plot.compare_all(data_dir='./data/', y_var='mean', save=True, show=False)
@@ -70,6 +67,8 @@ def main():
 
 
 if __name__ == '__main__':
+    open('frd.log', 'w').close() #hack because filemode='w' was corrupting the log file for unknown reasons
+    logging.basicConfig(filename='frd.log', encoding='UTF-8', format='%(asctime)s %(levelname)s | %(module)s | %(funcName)s | %(message)s', level=logging.INFO)
     main()
 
     
