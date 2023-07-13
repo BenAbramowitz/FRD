@@ -34,6 +34,7 @@ def main():
 
     for experiment_name in experiments.keys():
         if EXPERIMENTS and experiment_name not in EXPERIMENTS: continue #which experiments to run
+        print('Starting Experiment '+str(experiment_name) +' running '+str(N_ITER) +' iterations')
         logging.info('')
         logging.info('Starting Experiment '+str(experiment_name) +' running '+str(N_ITER) +' iterations')
         #unpack experiment parameters
@@ -45,7 +46,7 @@ def main():
         start = time.perf_counter()
 
         #run simulation for this experiment
-        data, param_names, n_iter, experiment_params, filename = simulate.sim_parallel(N_ITER, 
+        _, param_names, n_iter, experiment_params, filename = simulate.sim_parallel(N_ITER, 
         profile_param_vals, election_param_vals, del_voting_param_vals, save=save, experiment_name = experiment_name,data_dir=data_dir)
 
         #save data and analysis (i.e. moments) and generate plots
@@ -61,8 +62,7 @@ def main():
         logging.info(f'Total runtime: {end-start}')
         logging.info(f'Avg runtime per iteration: {(end-start)/n_iter}')
 
-    #Create plots for all data in the data folder and save/show them
-    # if save: plot.compare_all(data_dir='./data/', y_var='mean', save=True, show=False)
+    logging.info('Done')
 
 
 
@@ -70,5 +70,6 @@ if __name__ == '__main__':
     open('frd.log', 'w').close() #hack because filemode='w' was corrupting the log file for unknown reasons
     logging.basicConfig(filename='frd.log', encoding='UTF-8', format='%(asctime)s %(levelname)s | %(module)s | %(funcName)s | %(message)s', level=logging.INFO)
     main()
+    
 
     
