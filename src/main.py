@@ -69,7 +69,7 @@ def main():
 if __name__ == '__main__':
     print('Starting Run')
     open('frd.log', 'w').close() #hack because filemode='w' was corrupting the log file for unknown reasons
-    logging.basicConfig(filename='frd.log', encoding='UTF-8', format='%(asctime)s %(levelname)s | %(module)s | %(funcName)s | %(message)s', level=logging.INFO)
+    logging.basicConfig(filename='frd.log', format='%(asctime)s %(levelname)s | %(module)s | %(funcName)s | %(message)s', level=logging.INFO)
     main()
     
 
