@@ -19,8 +19,7 @@ NOTE: Currently, you want to vary only one independent variable per experiment i
 
 
 def main():
-    # EXPERIMENTS = ['FRD_borda_incisive_del_rate_cands_p'] #Set which experiments to run. Runs all if list is empty
-    EXPERIMENTS = ['RD_cands_p']
+    EXPERIMENTS = ['FRD_borda_incisive_del_rate_cands_p'] #Set which experiments to run. Runs all if list is empty
     N_ITER = 1
     save=True
     show=False

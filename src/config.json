@@ -5,7 +5,7 @@
             "n_cands":[60],
             "n_issues":[200],
             "voters_p":[0.5],
-            "cands_p":[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],
+            "cands_p":[0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,1],
             "app_k":[100],
             "app_thresh":[0.5]
         },
@@ -26,7 +26,7 @@
             "n_cands":[60],
             "n_issues":[200],
             "voters_p":[0.6],
-            "cands_p":[0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1],
+            "cands_p":[0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95,1],
             "app_k":[100],
             "app_thresh":[0.5]
         },
@@ -74,7 +74,7 @@
         },
         "election_param_vals":{
             "election_rules":["max_approval","borda","plurality","rav", "irv","max_agreement", "random_winners"],
-            "n_reps":[10,20,30,40,50,60]
+            "n_reps":[10,15,20,25,30,35,40,45,50,55,60]
         },
         "del_voting_param_vals":{
             "default_style":["uniform"],
@@ -86,7 +86,7 @@
     "RD_cands":{
         "profile_param_vals":{
             "n_voters":[100],
-            "n_cands":[30,40,50,60,70,80,90,100],
+            "n_cands":[30,35,40,45,50,55,60,65,70,75,80,85,90,95,100],
             "n_issues":[200],
             "voters_p":[0.5],
             "cands_p":[0.5],
@@ -108,7 +108,7 @@
         "profile_param_vals":{
             "n_voters":[100],
             "n_cands":[60],
-            "n_issues":[20,40,60,80,100,120,140,160,180,200],
+            "n_issues":[20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200],
             "voters_p":[0.6],
             "cands_p":[0.4],
             "app_k":[100],
@@ -171,7 +171,7 @@
         "profile_param_vals":{
             "n_voters":[100],
             "n_cands":[60],
-            "n_issues":[20,40,60,80,100,120,140,160,180,200],
+            "n_issues":[20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,200],
             "voters_p":[0.6],
             "cands_p":[0.6],
             "app_k":[100],
@@ -230,7 +230,7 @@
             "n_delegators":[null]
         }
     },
-    "FRD_incisive_borda_del_rate":{
+    "FRD_incisive_del_rate":{
         "profile_param_vals":{
             "n_voters":[100],
             "n_cands":[60],
@@ -241,14 +241,14 @@
             "app_thresh":[0.5]
         },
         "election_param_vals":{
-            "election_rules":["borda"],
+            "election_rules":["max_approval","borda","plurality","rav", "irv","max_agreement", "random_winners"],
             "n_reps":[21]
         },
         "del_voting_param_vals":{
             "default_style":["uniform"],
             "delegation_style":["incisive"],
             "best_k":[null],
-            "n_delegators":[0,10,20,30,40,50,60,70,80,90,100]
+            "n_delegators":[0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100]
         }
     },
     "FRD_bestk_borda_del_rate":{
@@ -269,7 +269,7 @@
             "default_style":["uniform"],
             "delegation_style":["best_k"],
             "best_k":[1,3,5,7,9,11],
-            "n_delegators":[0,10,20,30,40,50,60,70,80,90,100]
+            "n_delegators":[0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100]
         }
     },
     "FRD_bestk":{
@@ -289,8 +289,29 @@
         "del_voting_param_vals":{
             "default_style":["uniform"],
             "delegation_style":["best_k"],
-            "best_k":[1,3,5,7,9,11],
+            "best_k":[1,3,5,7,9,11,13,15,17,19,21],
             "n_delegators":[100]
+        }
+    },
+    "FRD_borda_incisive_del_rate_cands_p":{
+        "profile_param_vals":{
+            "n_voters":[100],
+            "n_cands":[60],
+            "n_issues":[200],
+            "voters_p":[0.5],
+            "cands_p":[0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
+            "app_k":[100],
+            "app_thresh":[0.5]
+        },
+        "election_param_vals":{
+            "election_rules":["borda"],
+            "n_reps":[21]
+        },
+        "del_voting_param_vals":{
+            "default_style":["uniform"],
+            "delegation_style":["incisive"],
+            "best_k":[null],
+            "n_delegators":[0,10,20,30,40,50,60,70,80,90,100]
         }
     }
 }
