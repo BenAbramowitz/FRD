@@ -18,7 +18,7 @@ def four_moments(array):
     kurtosis = stats.kurtosis(array)
     return [mean, variance, skew, kurtosis]
 
-def get_moments(filename, param_names, save=True, data_dir='../data'):
+def get_moments(filename, param_names, save=True, data_dir=Path("./data")):
     '''
     Load data from file, compute moments for each parameterization in that experiment, then save analysis as csv
 

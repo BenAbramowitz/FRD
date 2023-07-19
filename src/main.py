@@ -19,11 +19,12 @@ NOTE: Currently, you want to vary only one independent variable per experiment i
 
 
 def main():
-    EXPERIMENTS = [] #Set which experiments to run. Runs all if list is empty
-    N_ITER = 1000
+    # EXPERIMENTS = ['FRD_borda_incisive_del_rate_cands_p'] #Set which experiments to run. Runs all if list is empty
+    EXPERIMENTS = ['RD_cands_p']
+    N_ITER = 1
     save=True
     show=False
-    data_dir='../data/'
+    data_dir=Path("../data")
 
     p = Path(__file__).with_name('config.json')
     with p.open('r') as f:
@@ -68,9 +69,11 @@ def main():
 
 if __name__ == '__main__':
     print('Starting Run')
+    start_time = time.perf_counter()
     open('frd.log', 'w').close() #hack because filemode='w' was corrupting the log file for unknown reasons
     logging.basicConfig(filename='frd.log', format='%(asctime)s %(levelname)s | %(module)s | %(funcName)s | %(message)s', level=logging.INFO)
     main()
+    print(time.perf_counter()-start_time)
     
 
     

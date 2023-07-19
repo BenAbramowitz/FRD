@@ -3,6 +3,7 @@ import seaborn as sns
 import pandas as pd
 import numpy as np
 from pathlib import Path
+import os
 from os import listdir
 from os.path import isfile, join
 import logging
@@ -130,10 +131,10 @@ def create_subtitle(x_var:str, y_var:str, params:dict):
 #         plt.show()
 
 
-def plot_one_var(filename, experiment_name, x_var:str, y_var='mean', save=True, show=False, data_dir='../data/'):
+def plot_one_var(filename, experiment_name, x_var:str, y_var='mean', save=True, show=False, data_dir=Path("./data")):
     logging.info(f'Creating one line plot for experiment {experiment_name}')
     check_filetype(filename, 'csv')
-    df = pd.read_csv(data_dir+filename)
+    df = pd.read_csv(os.path.join(data_dir,filename))
     df[x_var] = df[x_var].apply(lambda x: var_to_title(x))
     sns.set_theme(rc={"figure.figsize":(8, 8)})
     sns.set_style("white")
@@ -143,15 +144,16 @@ def plot_one_var(filename, experiment_name, x_var:str, y_var='mean', save=True, 
     p.set(title=title, xlabel=xlabel, ylabel=ylabel)
     if save:
         fig = p.get_figure()
-        fig.savefig('../plots/'+experiment_name+'_'+y_var+'_vs_'+x_var)
+        plotname = os.path.join("../plots", experiment_name+'_'+y_var+'_vs_'+x_var)
+        fig.savefig(plotname)
         if not show: plt.close(fig)
     if show:
         plt.show()
 
-def plot_two_var(filename, experiment_name, l_var:str, x_var:str, y_var='mean', save=True, show=False, data_dir='../data/'):
+def plot_two_var(filename, experiment_name, l_var:str, x_var:str, y_var='mean', save=True, show=False, data_dir=Path("./data")):
     logging.info(f'Creating two line plots for experiment {experiment_name}')
     check_filetype(filename, 'csv')
-    df = pd.read_csv(data_dir+filename)
+    df = pd.read_csv(os.path.join(data_dir,filename))
     df[l_var] = df[l_var].apply(lambda x: var_to_title(x))
     df[x_var] = df[x_var].apply(lambda x: var_to_title(x))
 
@@ -171,13 +173,14 @@ def plot_two_var(filename, experiment_name, l_var:str, x_var:str, y_var='mean', 
     #Create figure for plot and save/show it
     if save: 
         fig = p.get_figure()
-        fig.savefig('../plots/'+experiment_name+'_compare_'+l_var+'_'+y_var+'_vs_'+x_var)
+        plotname = os.path.join("../plots", experiment_name+'_'+y_var+'_vs_'+x_var)
+        fig.savefig(plotname)
         if not show: plt.close(fig)
     if show: 
         plt.show()
     
 
-def plot_moments(momentsfile:str, y_var:str='mean', save:bool=True, show:bool=False, data_dir:str='../data/'):
+def plot_moments(momentsfile:str, y_var:str='mean', save:bool=True, show:bool=False, data_dir=Path("./data")):
     '''
     Given file with moments data and a y_var, create a plot showing the behavior of the independent variable(s)
 
@@ -189,7 +192,7 @@ def plot_moments(momentsfile:str, y_var:str='mean', save:bool=True, show:bool=Fa
     #
     check_filetype(momentsfile, 'csv')
     experiment_name = momentsfile.partition('_moments')[0]
-    df = pd.read_csv(data_dir+momentsfile)
+    df = pd.read_csv(os.path.join(data_dir,momentsfile))
     varied = get_columns_with_multiple_unique_values(df.iloc[:,1:-4])#Only the independent variables, ignore index column
     if len(varied) > 2:
         print(f'Moments file contains more than two independent variables, cannot automatically plot comparisons: {momentsfile}')
@@ -200,7 +203,7 @@ def plot_moments(momentsfile:str, y_var:str='mean', save:bool=True, show:bool=Fa
         plot_one_var(momentsfile, experiment_name, x_var=varied[0], y_var=y_var, save=save, show=show, data_dir=data_dir)
 
 
-def compare_all(data_dir='../data/', y_var='mean', save=True, show=True)->None:
+def compare_all(data_dir=Path("./data"), y_var='mean', save=True, show=True)->None:
     '''
     For all experiments with 1 or 2 independent variables, read in the moments, and create a line plot
     The variable for the y-axis is given, and the x_var and l_var are inferred
@@ -218,18 +221,6 @@ def compare_all(data_dir='../data/', y_var='mean', save=True, show=True)->None:
     #for each experiment, read in the data and plot based on number of idnependent variables
     for idx,f in enumerate(momentfiles):
         plot_moments(f, y_var=y_var, save=save, show=show, data_dir=data_dir)
-        # check_filetype(f, 'csv')
-        # experiment_name = f.partition('_moments')[0]
-        # df = pd.read_csv(data_dir+f)
-        # varied = get_columns_with_multiple_unique_values(df.iloc[:,1:-4])#Only the independent variables, ignore index column
-        # if len(varied) > 2:
-        #     print(f'Moments file contains more than two independent variables, cannot automatically plot comparisons: {f}')
-        #     continue
-        # elif len(varied) == 2:
-        #     plot_two_var(f, experiment_name, l_var=varied[0], x_var=varied[1], y_var=y_var, save=save, show=show, data_dir=data_dir)
-        #     plot_two_var(f, experiment_name, l_var=varied[1], x_var=varied[0], y_var=y_var, save=save, show=show, data_dir=data_dir)
-        # elif len(varied) == 1:
-        #     plot_one_var(f, experiment_name, x_var=varied[0], y_var=y_var, save=save, show=show, data_dir=data_dir)
 
 def get_columns_with_multiple_unique_values(df:pd.DataFrame)->list:
     '''

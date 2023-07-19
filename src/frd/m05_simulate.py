@@ -1,6 +1,7 @@
 import multiprocessing as mp
 from multiprocessing import Pool
 import logging
+from pathlib import Path
 
 from . import m00_helper as helper
 from . import m01_profiles as profiles
@@ -73,19 +74,21 @@ def single_iter(profile_param_vals:tuple, election_param_vals:dict, del_voting_p
 def single_iter_unpacker(args):
     return single_iter(*args)
 
-def sim_parallel(n_iter:int, profile_param_vals:dict, election_param_vals:dict, del_voting_param_vals:dict, save:bool=True, experiment_name=None, data_dir='../data/'):
+def sim_parallel(n_iter:int, profile_param_vals:dict, election_param_vals:dict, del_voting_param_vals:dict, save:bool=True, experiment_name=None, data_dir=Path('../data/')):
     data = {}
     logging.info(f'Parallelizing iterations on up to {mp.cpu_count()-1} CPUs')
     with Pool(mp.cpu_count()-1) as pool:
         for iter_data in pool.imap_unordered(single_iter_unpacker, [[profile_param_vals, election_param_vals, del_voting_param_vals]]*n_iter):
             helper.append_dict_values(data, iter_data)
+
+    experiment_params = helper.merge_dicts([profile_param_vals,election_param_vals, del_voting_param_vals])
+    param_names = helper.params_dict_to_tuples(experiment_params)[1]
     if save:
         logging.info('Saving agreements data to file using pickle')
-        experiment_params = helper.merge_dicts([profile_param_vals, election_param_vals, del_voting_param_vals])
-        param_names = helper.params_dict_to_tuples(experiment_params)[1]
         filename = save_data.pickle_data(data, experiment_params, experiment_name=experiment_name,data_dir=data_dir)
         return data, param_names, n_iter, experiment_params, filename
-    return data
+    else:
+        return data, param_names, n_iter, experiment_params, None
 
 
     

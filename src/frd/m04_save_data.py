@@ -76,7 +76,7 @@ def name_experiment(experiment_params:dict, n_iter:int)->str:
 
     return name
 
-def pickle_data(data:dict, experiment_params:dict=None, experiment_name:str = None, data_dir='../data/')->str:
+def pickle_data(data:dict, experiment_params:dict=None, experiment_name:str = None, data_dir=Path("./data"))->str:
     '''
     Save experiment data (dict), creating a filename from experiment_params if not given.
 
@@ -97,13 +97,13 @@ def pickle_data(data:dict, experiment_params:dict=None, experiment_name:str = No
     n_iter = len(list(data.values())[0])
     if experiment_name is None: experiment_name = name_experiment(experiment_params, n_iter)
     filename = experiment_name+'_data'
-    with open(data_dir+filename, 'w+b') as output_file:
+    with open(os.path.join(data_dir,filename), 'w+b') as output_file:
         logging.info('File is open for writing data with mode w+b')
         pickle.dump(data, output_file)
     return filename
 
-def unpickle_data(filename, data_dir='../data/')->dict:
-    with open(data_dir+filename, 'rb') as input_file:
+def unpickle_data(filename, data_dir=Path("./data"))->dict:
+    with open(os.path.join(data_dir,filename), 'rb') as input_file:
         data = pickle.load(input_file)
     return data
 
