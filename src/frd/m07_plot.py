@@ -163,7 +163,7 @@ def plot_two_var(filename, experiment_name, l_var:str, x_var:str, y_var='mean', 
 
     #format the plot
     title, xlabel, ylabel = label_plot(x_var, y_var)
-    # if y_var == 'mean': p.set_yticks(np.arange(0,101,10)/100)
+    if y_var == 'mean': p.set_yticks(np.arange(0,101,10)/100)
     p.legend(title=var_to_title(l_var))
     if x_var.lower() == 'election_rules':
         p.set_xticks(p.get_xticks()) #dumb hack to prevent set_xticklabels from issuing a warning
