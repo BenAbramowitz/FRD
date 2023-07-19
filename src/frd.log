@@ -1,0 +1,168 @@
+2023-07-18 22:25:16,348 INFO | main | main | 
+2023-07-18 22:25:16,348 INFO | main | main | Starting Experiment RD_cands_p running 1000 iterations
+2023-07-18 22:25:16,348 INFO | m05_simulate | sim_parallel | Parallelizing iterations on up to 11 CPUs
+2023-07-18 22:34:12,618 INFO | m05_simulate | sim_parallel | Saving agreements data to file using pickle
+2023-07-18 22:34:12,618 INFO | m04_save_data | pickle_data | File is open for writing data with mode w+b
+2023-07-18 22:34:12,622 INFO | main | main | Experiment data saved to RD_cands_p_data using pickle
+2023-07-18 22:34:12,664 INFO | main | main | Moments computed and saved as csv
+2023-07-18 22:34:12,671 INFO | m07_plot | plot_two_var | Creating two line plots for experiment RD_cands_p
+2023-07-18 22:34:12,874 INFO | m07_plot | plot_two_var | Creating two line plots for experiment RD_cands_p
+2023-07-18 22:34:13,092 INFO | main | main | Plots created for mean agreement
+2023-07-18 22:34:13,092 INFO | main | main | Total runtime: 536.7442485319989
+2023-07-18 22:34:13,092 INFO | main | main | Avg runtime per iteration: 0.5367442485319989
+2023-07-18 22:34:13,092 INFO | main | main | 
+2023-07-18 22:34:13,092 INFO | main | main | Starting Experiment RD_cands_p_biased running 1000 iterations
+2023-07-18 22:34:13,093 INFO | m05_simulate | sim_parallel | Parallelizing iterations on up to 11 CPUs
+2023-07-18 22:43:17,641 INFO | m05_simulate | sim_parallel | Saving agreements data to file using pickle
+2023-07-18 22:43:17,641 INFO | m04_save_data | pickle_data | File is open for writing data with mode w+b
+2023-07-18 22:43:17,645 INFO | main | main | Experiment data saved to RD_cands_p_biased_data using pickle
+2023-07-18 22:43:17,694 INFO | main | main | Moments computed and saved as csv
+2023-07-18 22:43:17,700 INFO | m07_plot | plot_two_var | Creating two line plots for experiment RD_cands_p_biased
+2023-07-18 22:43:17,964 INFO | m07_plot | plot_two_var | Creating two line plots for experiment RD_cands_p_biased
+2023-07-18 22:43:18,229 INFO | main | main | Plots created for mean agreement
+2023-07-18 22:43:18,229 INFO | main | main | Total runtime: 545.1366473159997
+2023-07-18 22:43:18,229 INFO | main | main | Avg runtime per iteration: 0.5451366473159996
+2023-07-18 22:43:18,229 INFO | main | main | 
+2023-07-18 22:43:18,229 INFO | main | main | Starting Experiment RD_issues running 1000 iterations
+2023-07-18 22:43:18,229 INFO | m05_simulate | sim_parallel | Parallelizing iterations on up to 11 CPUs
+2023-07-18 22:52:20,821 INFO | m05_simulate | sim_parallel | Saving agreements data to file using pickle
+2023-07-18 22:52:20,822 INFO | m04_save_data | pickle_data | File is open for writing data with mode w+b
+2023-07-18 22:52:20,826 INFO | main | main | Experiment data saved to RD_issues_data using pickle
+2023-07-18 22:52:20,876 INFO | main | main | Moments computed and saved as csv
+2023-07-18 22:52:20,882 INFO | m07_plot | plot_two_var | Creating two line plots for experiment RD_issues
+2023-07-18 22:52:21,148 INFO | m07_plot | plot_two_var | Creating two line plots for experiment RD_issues
+2023-07-18 22:52:21,414 INFO | main | main | Plots created for mean agreement
+2023-07-18 22:52:21,414 INFO | main | main | Total runtime: 543.185244403001
+2023-07-18 22:52:21,414 INFO | main | main | Avg runtime per iteration: 0.543185244403001
+2023-07-18 22:52:21,414 INFO | main | main | 
+2023-07-18 22:52:21,415 INFO | main | main | Starting Experiment RD_reps running 1000 iterations
+2023-07-18 22:52:21,415 INFO | m05_simulate | sim_parallel | Parallelizing iterations on up to 11 CPUs
+2023-07-18 22:58:25,513 INFO | m05_simulate | sim_parallel | Saving agreements data to file using pickle
+2023-07-18 22:58:25,513 INFO | m04_save_data | pickle_data | File is open for writing data with mode w+b
+2023-07-18 22:58:25,516 INFO | main | main | Experiment data saved to RD_reps_data using pickle
+2023-07-18 22:58:25,547 INFO | main | main | Moments computed and saved as csv
+2023-07-18 22:58:25,553 INFO | m07_plot | plot_two_var | Creating two line plots for experiment RD_reps
+2023-07-18 22:58:25,818 INFO | m07_plot | plot_two_var | Creating two line plots for experiment RD_reps
+2023-07-18 22:58:26,053 INFO | main | main | Plots created for mean agreement
+2023-07-18 22:58:26,053 INFO | main | main | Total runtime: 364.6386795769995
+2023-07-18 22:58:26,053 INFO | main | main | Avg runtime per iteration: 0.36463867957699947
+2023-07-18 22:58:26,053 INFO | main | main | 
+2023-07-18 22:58:26,053 INFO | main | main | Starting Experiment RD_cands running 1000 iterations
+2023-07-18 22:58:26,053 INFO | m05_simulate | sim_parallel | Parallelizing iterations on up to 11 CPUs
+2023-07-18 23:06:46,366 INFO | m05_simulate | sim_parallel | Saving agreements data to file using pickle
+2023-07-18 23:06:46,366 INFO | m04_save_data | pickle_data | File is open for writing data with mode w+b
+2023-07-18 23:06:46,376 INFO | main | main | Experiment data saved to RD_cands_data using pickle
+2023-07-18 23:06:46,424 INFO | main | main | Moments computed and saved as csv
+2023-07-18 23:06:46,429 INFO | m07_plot | plot_two_var | Creating two line plots for experiment RD_cands
+2023-07-18 23:06:46,670 INFO | m07_plot | plot_two_var | Creating two line plots for experiment RD_cands
+2023-07-18 23:06:46,932 INFO | main | main | Plots created for mean agreement
+2023-07-18 23:06:46,932 INFO | main | main | Total runtime: 500.8790489109997
+2023-07-18 23:06:46,933 INFO | main | main | Avg runtime per iteration: 0.5008790489109997
+2023-07-18 23:06:46,933 INFO | main | main | 
+2023-07-18 23:06:46,933 INFO | main | main | Starting Experiment RD_issues_polarized running 1000 iterations
+2023-07-18 23:06:46,933 INFO | m05_simulate | sim_parallel | Parallelizing iterations on up to 11 CPUs
+2023-07-18 23:15:44,504 INFO | m05_simulate | sim_parallel | Saving agreements data to file using pickle
+2023-07-18 23:15:44,504 INFO | m04_save_data | pickle_data | File is open for writing data with mode w+b
+2023-07-18 23:15:44,509 INFO | main | main | Experiment data saved to RD_issues_polarized_data using pickle
+2023-07-18 23:15:44,559 INFO | main | main | Moments computed and saved as csv
+2023-07-18 23:15:44,564 INFO | m07_plot | plot_two_var | Creating two line plots for experiment RD_issues_polarized
+2023-07-18 23:15:44,828 INFO | m07_plot | plot_two_var | Creating two line plots for experiment RD_issues_polarized
+2023-07-18 23:15:45,092 INFO | main | main | Plots created for mean agreement
+2023-07-18 23:15:45,093 INFO | main | main | Total runtime: 538.1598734109994
+2023-07-18 23:15:45,093 INFO | main | main | Avg runtime per iteration: 0.5381598734109994
+2023-07-18 23:15:45,093 INFO | main | main | 
+2023-07-18 23:15:45,093 INFO | main | main | Starting Experiment RD_reps_polarized running 1000 iterations
+2023-07-18 23:15:45,093 INFO | m05_simulate | sim_parallel | Parallelizing iterations on up to 11 CPUs
+2023-07-18 23:21:42,558 INFO | m05_simulate | sim_parallel | Saving agreements data to file using pickle
+2023-07-18 23:21:42,558 INFO | m04_save_data | pickle_data | File is open for writing data with mode w+b
+2023-07-18 23:21:42,561 INFO | main | main | Experiment data saved to RD_reps_polarized_data using pickle
+2023-07-18 23:21:42,593 INFO | main | main | Moments computed and saved as csv
+2023-07-18 23:21:42,599 INFO | m07_plot | plot_two_var | Creating two line plots for experiment RD_reps_polarized
+2023-07-18 23:21:42,908 INFO | m07_plot | plot_two_var | Creating two line plots for experiment RD_reps_polarized
+2023-07-18 23:21:43,135 INFO | main | main | Plots created for mean agreement
+2023-07-18 23:21:43,135 INFO | main | main | Total runtime: 358.0426950300007
+2023-07-18 23:21:43,135 INFO | main | main | Avg runtime per iteration: 0.3580426950300007
+2023-07-18 23:21:43,136 INFO | main | main | 
+2023-07-18 23:21:43,136 INFO | main | main | Starting Experiment RD_cands_polarized running 1000 iterations
+2023-07-18 23:21:43,136 INFO | m05_simulate | sim_parallel | Parallelizing iterations on up to 11 CPUs
+2023-07-18 23:30:01,622 INFO | m05_simulate | sim_parallel | Saving agreements data to file using pickle
+2023-07-18 23:30:01,622 INFO | m04_save_data | pickle_data | File is open for writing data with mode w+b
+2023-07-18 23:30:01,626 INFO | main | main | Experiment data saved to RD_cands_polarized_data using pickle
+2023-07-18 23:30:01,666 INFO | main | main | Moments computed and saved as csv
+2023-07-18 23:30:01,672 INFO | m07_plot | plot_two_var | Creating two line plots for experiment RD_cands_polarized
+2023-07-18 23:30:01,914 INFO | m07_plot | plot_two_var | Creating two line plots for experiment RD_cands_polarized
+2023-07-18 23:30:02,177 INFO | main | main | Plots created for mean agreement
+2023-07-18 23:30:02,178 INFO | main | main | Total runtime: 499.0419195680006
+2023-07-18 23:30:02,178 INFO | main | main | Avg runtime per iteration: 0.4990419195680006
+2023-07-18 23:30:02,178 INFO | main | main | 
+2023-07-18 23:30:02,178 INFO | main | main | Starting Experiment RD_issues_similar running 1000 iterations
+2023-07-18 23:30:02,178 INFO | m05_simulate | sim_parallel | Parallelizing iterations on up to 11 CPUs
+2023-07-18 23:39:04,743 INFO | m05_simulate | sim_parallel | Saving agreements data to file using pickle
+2023-07-18 23:39:04,743 INFO | m04_save_data | pickle_data | File is open for writing data with mode w+b
+2023-07-18 23:39:04,748 INFO | main | main | Experiment data saved to RD_issues_similar_data using pickle
+2023-07-18 23:39:04,805 INFO | main | main | Moments computed and saved as csv
+2023-07-18 23:39:04,809 INFO | m07_plot | plot_two_var | Creating two line plots for experiment RD_issues_similar
+2023-07-18 23:39:05,007 INFO | m07_plot | plot_two_var | Creating two line plots for experiment RD_issues_similar
+2023-07-18 23:39:05,208 INFO | main | main | Plots created for mean agreement
+2023-07-18 23:39:05,208 INFO | main | main | Total runtime: 543.0303719240001
+2023-07-18 23:39:05,208 INFO | main | main | Avg runtime per iteration: 0.543030371924
+2023-07-18 23:39:05,208 INFO | main | main | 
+2023-07-18 23:39:05,208 INFO | main | main | Starting Experiment RD_reps_similar running 1000 iterations
+2023-07-18 23:39:05,208 INFO | m05_simulate | sim_parallel | Parallelizing iterations on up to 11 CPUs
+2023-07-18 23:45:09,817 INFO | m05_simulate | sim_parallel | Saving agreements data to file using pickle
+2023-07-18 23:45:09,818 INFO | m04_save_data | pickle_data | File is open for writing data with mode w+b
+2023-07-18 23:45:09,824 INFO | main | main | Experiment data saved to RD_reps_similar_data using pickle
+2023-07-18 23:45:09,856 INFO | main | main | Moments computed and saved as csv
+2023-07-18 23:45:09,862 INFO | m07_plot | plot_two_var | Creating two line plots for experiment RD_reps_similar
+2023-07-18 23:45:10,123 INFO | m07_plot | plot_two_var | Creating two line plots for experiment RD_reps_similar
+2023-07-18 23:45:10,347 INFO | main | main | Plots created for mean agreement
+2023-07-18 23:45:10,347 INFO | main | main | Total runtime: 365.1391809179986
+2023-07-18 23:45:10,348 INFO | main | main | Avg runtime per iteration: 0.3651391809179986
+2023-07-18 23:45:10,348 INFO | main | main | 
+2023-07-18 23:45:10,348 INFO | main | main | Starting Experiment RD_cands_similar running 1000 iterations
+2023-07-18 23:45:10,348 INFO | m05_simulate | sim_parallel | Parallelizing iterations on up to 11 CPUs
+2023-07-18 23:53:39,126 INFO | m05_simulate | sim_parallel | Saving agreements data to file using pickle
+2023-07-18 23:53:39,126 INFO | m04_save_data | pickle_data | File is open for writing data with mode w+b
+2023-07-18 23:53:39,130 INFO | main | main | Experiment data saved to RD_cands_similar_data using pickle
+2023-07-18 23:53:39,170 INFO | main | main | Moments computed and saved as csv
+2023-07-18 23:53:39,175 INFO | m07_plot | plot_two_var | Creating two line plots for experiment RD_cands_similar
+2023-07-18 23:53:39,355 INFO | m07_plot | plot_two_var | Creating two line plots for experiment RD_cands_similar
+2023-07-18 23:53:39,552 INFO | main | main | Plots created for mean agreement
+2023-07-18 23:53:39,552 INFO | main | main | Total runtime: 509.20445189899874
+2023-07-18 23:53:39,552 INFO | main | main | Avg runtime per iteration: 0.5092044518989988
+2023-07-18 23:53:39,552 INFO | main | main | 
+2023-07-18 23:53:39,552 INFO | main | main | Starting Experiment FRD_incisive_borda_del_rate running 1000 iterations
+2023-07-18 23:53:39,552 INFO | m05_simulate | sim_parallel | Parallelizing iterations on up to 11 CPUs
+2023-07-19 00:49:32,298 INFO | m05_simulate | sim_parallel | Saving agreements data to file using pickle
+2023-07-19 00:49:32,300 INFO | m04_save_data | pickle_data | File is open for writing data with mode w+b
+2023-07-19 00:49:32,304 INFO | main | main | Experiment data saved to FRD_incisive_borda_del_rate_data using pickle
+2023-07-19 00:49:32,329 INFO | main | main | Moments computed and saved as csv
+2023-07-19 00:49:32,338 INFO | m07_plot | plot_one_var | Creating one line plot for experiment FRD_incisive_borda_del_rate
+2023-07-19 00:49:32,508 INFO | main | main | Plots created for mean agreement
+2023-07-19 00:49:32,509 INFO | main | main | Total runtime: 3352.9562955500005
+2023-07-19 00:49:32,509 INFO | main | main | Avg runtime per iteration: 3.3529562955500003
+2023-07-19 00:49:32,509 INFO | main | main | 
+2023-07-19 00:49:32,509 INFO | main | main | Starting Experiment FRD_bestk_borda_del_rate running 1000 iterations
+2023-07-19 00:49:32,509 INFO | m05_simulate | sim_parallel | Parallelizing iterations on up to 11 CPUs
+2023-07-19 06:37:45,521 INFO | m05_simulate | sim_parallel | Saving agreements data to file using pickle
+2023-07-19 06:37:45,522 INFO | m04_save_data | pickle_data | File is open for writing data with mode w+b
+2023-07-19 06:37:45,526 INFO | main | main | Experiment data saved to FRD_bestk_borda_del_rate_data using pickle
+2023-07-19 06:37:45,580 INFO | main | main | Moments computed and saved as csv
+2023-07-19 06:37:45,586 INFO | m07_plot | plot_two_var | Creating two line plots for experiment FRD_bestk_borda_del_rate
+2023-07-19 06:37:45,895 INFO | m07_plot | plot_two_var | Creating two line plots for experiment FRD_bestk_borda_del_rate
+2023-07-19 06:37:46,180 INFO | main | main | Plots created for mean agreement
+2023-07-19 06:37:46,180 INFO | main | main | Total runtime: 20893.671729129
+2023-07-19 06:37:46,181 INFO | main | main | Avg runtime per iteration: 20.893671729129
+2023-07-19 06:37:46,181 INFO | main | main | 
+2023-07-19 06:37:46,181 INFO | main | main | Starting Experiment FRD_bestk running 1000 iterations
+2023-07-19 06:37:46,181 INFO | m05_simulate | sim_parallel | Parallelizing iterations on up to 11 CPUs
+2023-07-19 10:03:07,143 INFO | m05_simulate | sim_parallel | Saving agreements data to file using pickle
+2023-07-19 10:03:07,144 INFO | m04_save_data | pickle_data | File is open for writing data with mode w+b
+2023-07-19 10:03:07,147 INFO | main | main | Experiment data saved to FRD_bestk_data using pickle
+2023-07-19 10:03:07,180 INFO | main | main | Moments computed and saved as csv
+2023-07-19 10:03:07,186 INFO | m07_plot | plot_two_var | Creating two line plots for experiment FRD_bestk
+2023-07-19 10:03:07,438 INFO | m07_plot | plot_two_var | Creating two line plots for experiment FRD_bestk
+2023-07-19 10:03:07,658 INFO | main | main | Plots created for mean agreement
+2023-07-19 10:03:07,658 INFO | main | main | Total runtime: 12321.477422998003
+2023-07-19 10:03:07,658 INFO | main | main | Avg runtime per iteration: 12.321477422998003
+2023-07-19 10:03:07,658 INFO | main | main | Done
