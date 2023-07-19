@@ -73,7 +73,7 @@ def single_iter(profile_param_vals:tuple, election_param_vals:dict, del_voting_p
 def single_iter_unpacker(args):
     return single_iter(*args)
 
-def sim_parallel(n_iter:int, profile_param_vals:dict, election_param_vals:dict, del_voting_param_vals:dict, save:bool=True, experiment_name=None, data_dir='./data/'):
+def sim_parallel(n_iter:int, profile_param_vals:dict, election_param_vals:dict, del_voting_param_vals:dict, save:bool=True, experiment_name=None, data_dir='../data/'):
     data = {}
     logging.info(f'Parallelizing iterations on up to {mp.cpu_count()-1} CPUs')
     with Pool(mp.cpu_count()-1) as pool:

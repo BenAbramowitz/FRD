@@ -97,7 +97,7 @@ def create_subtitle(x_var:str, y_var:str, params:dict):
         subtitle += f'{params["n_reps"]} reps'
     return subtitle
 
-# def compare_rules(filename, experiment_name, x_var:str, y_var='mean', save=True, show=False, data_dir='./data/'):
+# def compare_rules(filename, experiment_name, x_var:str, y_var='mean', save=True, show=False, data_dir='../data/'):
 #     '''
 #     Takes in a dataframe of agreements and then plots agreement vs. x_var lines for each rule
 
@@ -125,12 +125,12 @@ def create_subtitle(x_var:str, y_var:str, params:dict):
 #     p.set(title=title, xlabel=xlabel, ylabel=ylabel)
 #     if save:
 #         fig = p.get_figure()
-#         fig.savefig('./plots/'+experiment_name+'_compare_rules_'+y_var+'_vs_'+x_var)
+#         fig.savefig('../plots/'+experiment_name+'_compare_rules_'+y_var+'_vs_'+x_var)
 #     if show:
 #         plt.show()
 
 
-def plot_one_var(filename, experiment_name, x_var:str, y_var='mean', save=True, show=False, data_dir='./data/'):
+def plot_one_var(filename, experiment_name, x_var:str, y_var='mean', save=True, show=False, data_dir='../data/'):
     logging.info(f'Creating one line plot for experiment {experiment_name}')
     check_filetype(filename, 'csv')
     df = pd.read_csv(data_dir+filename)
@@ -143,12 +143,12 @@ def plot_one_var(filename, experiment_name, x_var:str, y_var='mean', save=True, 
     p.set(title=title, xlabel=xlabel, ylabel=ylabel)
     if save:
         fig = p.get_figure()
-        fig.savefig('./plots/'+experiment_name+'_'+y_var+'_vs_'+x_var)
+        fig.savefig('../plots/'+experiment_name+'_'+y_var+'_vs_'+x_var)
         if not show: plt.close(fig)
     if show:
         plt.show()
 
-def plot_two_var(filename, experiment_name, l_var:str, x_var:str, y_var='mean', save=True, show=False, data_dir='./data/'):
+def plot_two_var(filename, experiment_name, l_var:str, x_var:str, y_var='mean', save=True, show=False, data_dir='../data/'):
     logging.info(f'Creating two line plots for experiment {experiment_name}')
     check_filetype(filename, 'csv')
     df = pd.read_csv(data_dir+filename)
@@ -171,13 +171,13 @@ def plot_two_var(filename, experiment_name, l_var:str, x_var:str, y_var='mean', 
     #Create figure for plot and save/show it
     if save: 
         fig = p.get_figure()
-        fig.savefig('./plots/'+experiment_name+'_compare_'+l_var+'_'+y_var+'_vs_'+x_var)
+        fig.savefig('../plots/'+experiment_name+'_compare_'+l_var+'_'+y_var+'_vs_'+x_var)
         if not show: plt.close(fig)
     if show: 
         plt.show()
     
 
-def plot_moments(momentsfile:str, y_var:str='mean', save:bool=True, show:bool=False, data_dir:str='./data/'):
+def plot_moments(momentsfile:str, y_var:str='mean', save:bool=True, show:bool=False, data_dir:str='../data/'):
     '''
     Given file with moments data and a y_var, create a plot showing the behavior of the independent variable(s)
 
@@ -200,7 +200,7 @@ def plot_moments(momentsfile:str, y_var:str='mean', save:bool=True, show:bool=Fa
         plot_one_var(momentsfile, experiment_name, x_var=varied[0], y_var=y_var, save=save, show=show, data_dir=data_dir)
 
 
-def compare_all(data_dir='./data/', y_var='mean', save=True, show=True)->None:
+def compare_all(data_dir='../data/', y_var='mean', save=True, show=True)->None:
     '''
     For all experiments with 1 or 2 independent variables, read in the moments, and create a line plot
     The variable for the y-axis is given, and the x_var and l_var are inferred
