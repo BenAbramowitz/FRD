@@ -6,7 +6,7 @@ import os
 # import pickle
 from scipy import stats
 
-import frd.m04_save_data as save_data
+import frd.save_data as save_data
 
 def four_moments(array):
     '''

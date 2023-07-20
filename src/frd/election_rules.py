@@ -5,8 +5,8 @@ from typing import Tuple, Callable #to type hint tuples
 
 import whalrus
 
-from . import m00_helper as helper
-from . import m01_profiles as profiles
+from . import helper as helper
+from . import profiles as profiles
 
 '''
 All election rules return two values: a list of rep ids of winning cands, and the scores of all cands from the election (not just the rep scores)

@@ -2,9 +2,9 @@ import numpy as np
 import copy
 import logging
 
-from . import m00_helper as helper
-from . import m01_profiles as profiles
-from . import m02_election_rules as rules
+from . import helper as helper
+from . import profiles as profiles
+from . import election_rules as rules
 
 def majority(binary_matrix)->np.ndarray:
     '''

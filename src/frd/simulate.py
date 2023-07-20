@@ -3,11 +3,11 @@ from multiprocessing import Pool
 import logging
 from pathlib import Path
 
-from . import m00_helper as helper
-from . import m01_profiles as profiles
-from . import m02_election_rules as rules
-from . import m03_delegative_voting as d_voting
-from . import m04_save_data as save_data
+from . import helper as helper
+from . import profiles as profiles
+from . import election_rules as rules
+from . import delegative_voting as d_voting
+from . import save_data as save_data
 
 
 APPROVAL_RULES = ['max_approval', 'rav']
@@ -33,10 +33,10 @@ def single_iter(profile_param_vals:tuple, election_param_vals:dict, del_voting_p
 
     for profile_params in helper.params_dict_to_tuples(profile_param_vals)[0]:
         # create new profile instance
-        (n_voters, n_cands, n_issues, voters_p, cands_p, app_k, app_thresh) = profile_params
+        (n_voters, n_cands, n_issues, voters_p, cands_p, app_k, app_thresh, intensities) = profile_params
         prof = profiles.Profile(n_voters, n_cands, n_issues, voters_p, cands_p, app_k, app_thresh)
         election_rules = election_param_vals.get('election_rules')
-        prof.new_instance(**profiles_needed(election_rules)) # derive only the election profiles necessary
+        prof.new_instance(**profiles_needed(election_rules),intensities) # derive only the election profiles necessary
         logging.debug(f'New profile created with params: {profile_params}')
 
         for election_params in helper.params_dict_to_tuples(election_param_vals)[0]:

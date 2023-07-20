@@ -4,7 +4,7 @@ import logging
 import numpy as np
 import whalrus
 
-from . import m00_helper as helper
+from . import helper as helper
 
 class Profile():
     def __init__(self, n_voters:int, n_cands:int, n_issues:int, voters_p, cands_p, app_k, app_thresh):
@@ -25,6 +25,7 @@ class Profile():
         self.orders = {} #dict of numpy arrays
         self.whalrus_orders = None #whalrus Profile object made from orders
         self.agreements = {} #dict of numpy arrays
+        
 
         self.voter_majority_outcomes = None
 

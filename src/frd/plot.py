@@ -8,7 +8,7 @@ from os import listdir
 from os.path import isfile, join
 import logging
 
-from . import m00_helper as helper
+from . import helper as helper
 
 #Given a data file with experiments, we want to generate line plots
 #Each line plot has an x_var, and y_var, and a l_var determining what each line represents (e.g. rules)
@@ -159,7 +159,7 @@ def plot_two_var(filename, experiment_name, l_var:str, x_var:str, y_var='mean', 
 
     sns.set(rc={"figure.figsize":(8, 8)})
     sns.set_style("white")
-    p = sns.lineplot(data=df, x=x_var, y=y_var, hue=l_var, style=l_var, markers=True, dashes=False)
+    p = sns.lineplot(data=df, x=x_var, y=y_var, hue=l_var, dashes=False, markers=False)
 
     #format the plot
     title, xlabel, ylabel = label_plot(x_var, y_var)
