@@ -136,7 +136,7 @@ def plot_one_var(filename, experiment_name, x_var:str, y_var='mean', save=True, 
     check_filetype(filename, 'csv')
     df = pd.read_csv(os.path.join(data_dir,filename))
     df[x_var] = df[x_var].apply(lambda x: var_to_title(x))
-    sns.set_theme(rc={"figure.figsize":(8, 8)})
+    sns.set(rc={"figure.figsize":(8, 8)})
     sns.set_style("white")
     p = sns.lineplot(data=df, x=x_var, y=y_var)
     title, xlabel, ylabel = label_plot(x_var, y_var)
@@ -157,7 +157,7 @@ def plot_two_var(filename, experiment_name, l_var:str, x_var:str, y_var='mean', 
     df[l_var] = df[l_var].apply(lambda x: var_to_title(x))
     df[x_var] = df[x_var].apply(lambda x: var_to_title(x))
 
-    sns.set_theme(rc={"figure.figsize":(8, 8)})
+    sns.set(rc={"figure.figsize":(8, 8)})
     sns.set_style("white")
     p = sns.lineplot(data=df, x=x_var, y=y_var, hue=l_var, style=l_var, markers=True, dashes=False)
 
