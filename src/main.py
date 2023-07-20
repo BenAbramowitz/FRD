@@ -20,8 +20,9 @@ NOTE: Currently, you want to vary only one independent variable per experiment i
 
 def main():
     EXPERIMENTS = ['FRD_borda_incisive_del_rate_cands_p'] #Set which experiments to run. Runs all if list is empty
-    N_ITER = 1
-    save=True
+    # EXPERIMENTS = ['RD_cands_p']
+    N_ITER = 1000
+    save=False
     show=False
     data_dir=Path("../data")
 
@@ -73,6 +74,7 @@ if __name__ == '__main__':
     logging.basicConfig(filename='frd.log', format='%(asctime)s %(levelname)s | %(module)s | %(funcName)s | %(message)s', level=logging.INFO)
     main()
     print(time.perf_counter()-start_time)
+    
     
 
     
