@@ -12,6 +12,7 @@ class Profile():
         self.n_issues = n_issues
         self.voters_p, self.cands_p = voters_p, cands_p
 
+        self.v_intensities:np.ndarray = None #1D array
         self.v_pref:np.ndarray = None #np.empty((n_voters, n_issues))
         self.c_pref:np.ndarray = None #np.empty((n_cands, n_issues))
         
@@ -29,7 +30,7 @@ class Profile():
 
         self.voter_majority_outcomes = None
 
-    def create_issue_prefs(self)->Tuple[np.ndarray, np.ndarray]:
+    def create_issue_prefs(self, intensity_dist)->Tuple[np.ndarray, np.ndarray]:
         '''
         Create voter and cand prefs over issues and reset any values that were derived from voter/cands prefs 
         (e.g. distances, voter majority, and election profiles)
@@ -43,8 +44,25 @@ class Profile():
         -------
         Since a single profile object may be used many times instead of creating a new profile in each instance, this method can be used to generate new issue prefs
         with the same parameters, and resets any values based on the issue prefs to prevent mismatch
+
+        For normally distributed intensities the mean is 0.5 and variance is 1.
         '''
-        self.v_pref = np.random.binomial(1, self.voters_p, size=(self.n_voters, self.n_issues))
+
+        if intensity_dist is None and self.voters_p is not None:
+            self.v_pref = np.random.binomial(1, self.voters_p, size=(self.n_voters, self.n_issues))
+        elif intensity_dist is not None:
+            if intensity_dist == 'uniform':
+                logging.debug('Generating prefs from uniformly distributed intensities')
+                self.v_intensities = np.random.uniform(low=0, high=1, size=(self.n_voters,))
+            elif intensity_dist == 'normal':
+                logging.debug('Generating prefs from normally distributed intensities with mean 0.5 and variance 1')
+                self.v_intensities = np.random.normal(0.5, 1, self.n_voters)
+            else:
+                raise ValueError(f'Intensity dist not available: {intensity_dist}')
+            self.v_pref = np.empty((self.n_voters, self.n_issues))
+            for v in range(self.n_voters):
+                self.v_pref[v] = np.random.binomial(1, self.v_intensities[v], size=(self.n_issues))
+            self.v_pref = np.round(self.v_pref)
         self.c_pref = np.random.binomial(1, self.cands_p, size=(self.n_cands, self.n_issues))
         self.reset_derivatives()
         return self.v_pref, self.c_pref
@@ -178,7 +196,7 @@ class Profile():
         self.agreements = {v_id: 1 - self.distances[v_id] for v_id in range(self.n_voters)}
         return self.agreements
     
-    def new_instance(self, approvals = True, ordinals = True, agreements = True, whalrus_orders=True):
+    def new_instance(self, intensity_dist=None, approvals = True, ordinals = True, agreements = True, whalrus_orders=True):
         '''
         Creates new profile, distances, and derived election profiles indicated by kwargs.
 
@@ -188,7 +206,7 @@ class Profile():
             (n_voters, n_cands, n_issues, voters_p, cands_p, and approval_params).
         This is to save time and memory creating new instances with consistent params without a new Profile object each time
         '''
-        self.create_issue_prefs() #automatically resets all derivatives from issue prefs
+        self.create_issue_prefs(intensity_dist) #automatically resets all derivatives from issue prefs
         self.issues_to_distances()
         self.voter_majority_vote()
         if approvals: 
@@ -234,6 +252,9 @@ class Profile():
         self.orders = orders
 
     ##Getters
+
+    def get_v_intensities(self):
+        return self.v_intensities
 
     def get_n_cands(self):
         return self.n_cands

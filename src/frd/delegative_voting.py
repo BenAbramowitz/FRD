@@ -200,6 +200,22 @@ class FRD():
         '''
         self.delegator_ids = np.random.choice(self.n_voters, self.n_delegators, replace=False)
         return self.delegator_ids
+    
+    def intensity_delegators(self):
+        '''Voters delegate according to their preference intensity.
+        
+        NOTES
+        --------
+        If voter has intensity p_v from which their preferences are drawn (personalized voter_p), then they delegate (on all issues or no issues)
+        with probability 2*(|p_v - 0.5|).
+        '''
+        intensities = self.profile.get_v_intensities()
+        self.delegator_ids = []
+        for v in range(self.n_voters):
+            if np.random.binomial(1, 2*np.abs(intensities[v]-0.5), 1) == 1:
+                self.delegator_ids.append(v)
+        # print('delegator ids: ', self.delegator_ids)
+        return self.delegator_ids
 
     def incisive_delegation(self):
         '''
@@ -207,9 +223,13 @@ class FRD():
         Weighting is issue-specific.
         If there is no rep who agrees with them on some issue (so reps are unanimous and voter disagrees), they stick with default
 
+
+        NOTES
+        --------
+        Assumnes that delegator ids already determined in self.delegator_ids
+
         '''
         v_prefs, c_prefs = self.profile.get_issue_prefs()
-        self.select_n_delegators()
         # print(f'delegators: {self.delegator_ids}')
         for i in range(self.n_issues):
             r0 = np.where(c_prefs[:,i] == 0)[0].tolist() #rep who votes 0 on this issue
@@ -247,7 +267,12 @@ class FRD():
     
     def weight_reps(self):
         self.default_weighting()
-        self.select_n_delegators()
+        if self.n_delegators is not None and self.profile.get_v_intensities() is None:
+            self.select_n_delegators()
+        elif self.n_delegators is None and self.profile.get_v_intensities() is not None:
+            self.intensity_delegators()
+        else:
+            raise ValueError('Cannot determine whether delegation is fixed n_delegators or using intensities')
         if self.del_style == 'best_k':
             self.best_k_delegation()
         elif self.del_style == 'incisive':

@@ -33,17 +33,17 @@ def single_iter(profile_param_vals:tuple, election_param_vals:dict, del_voting_p
 
     for profile_params in helper.params_dict_to_tuples(profile_param_vals)[0]:
         # create new profile instance
-        (n_voters, n_cands, n_issues, voters_p, cands_p, app_k, app_thresh, intensities) = profile_params
+        (n_voters, n_cands, n_issues, voters_p, cands_p, app_k, app_thresh, intensity_dist) = profile_params
         prof = profiles.Profile(n_voters, n_cands, n_issues, voters_p, cands_p, app_k, app_thresh)
         election_rules = election_param_vals.get('election_rules')
-        prof.new_instance(**profiles_needed(election_rules),intensities) # derive only the election profiles necessary
-        logging.debug(f'New profile created with params: {profile_params}')
+        prof.new_instance(intensity_dist, **profiles_needed(election_rules)) # derive only the election profiles necessary
+        logging.info(f'New profile created with params: {profile_params}')
 
         for election_params in helper.params_dict_to_tuples(election_param_vals)[0]:
             # elect reps to get rep_ids and election_scores (if election rule provides scores)
             election_rule_name, n_reps = election_params
             if n_reps > n_cands: continue #skip nonsenical case where number of reps to elect is greater than number of cands
-            logging.debug(f'New election being run: {election_rule_name} with {n_reps} reps')
+            logging.info(f'New election being run: {election_rule_name} with {n_reps} reps')
 
             #create rd and frd objects to be reused where necessary, depending on delegation params. Run elections only once per iter
             made_rd=False
@@ -59,7 +59,7 @@ def single_iter(profile_param_vals:tuple, election_param_vals:dict, del_voting_p
             
             for del_voting_params in helper.params_dict_to_tuples(del_voting_param_vals)[0]:
                 logging.debug(f'Running RD or delegative voting with params: {del_voting_params}')
-                default, del_style, best_k, n_delegators = del_voting_params
+                default, del_style, best_k, n_delegators, intensities = del_voting_params
                 if n_delegators and n_delegators > n_voters: continue #skip nonsensical case
                 if best_k and best_k > n_reps: continue #skip nonsensical case
                 if del_style is None: #RD

@@ -6,10 +6,10 @@ from pathlib import Path
 import os
 
 
-import frd.m04_save_data as save_data
-import frd.m05_simulate as simulate
-import frd.m06_analysis as analysis
-import frd.m07_plot as plot
+import frd.save_data as save_data
+import frd.simulate as simulate
+import frd.analysis as analysis
+import frd.plot as plot
 
 
 
@@ -19,14 +19,15 @@ NOTE: Currently, you want to vary only one independent variable per experiment i
 
 
 def main():
-    EXPERIMENTS = ['FRD_borda_incisive_del_rate_cands_p'] #Set which experiments to run. Runs all if list is empty
+    EXPERIMENTS = [] #Set which experiments to run. Runs all if list is empty
     # EXPERIMENTS = ['RD_cands_p']
     N_ITER = 1000
-    save=False
+    save=True
     show=False
     data_dir=Path("../data")
 
-    p = Path(__file__).with_name('config.json')
+    # p = Path(__file__).with_name('config.json')
+    p = Path(__file__).with_name('experiment_intensities_1.json')
     with p.open('r') as f:
         experiments = json.load(f)
         f.close()
@@ -73,7 +74,9 @@ if __name__ == '__main__':
     open('frd.log', 'w').close() #hack because filemode='w' was corrupting the log file for unknown reasons
     logging.basicConfig(filename='frd.log', format='%(asctime)s %(levelname)s | %(module)s | %(funcName)s | %(message)s', level=logging.INFO)
     main()
-    print(time.perf_counter()-start_time)
+    end_time = time.perf_counter()-start_time
+    logging.info('Total runtime of all experiments combined: ' + str(end_time))
+    print('Total runtime of all experiments combined: ' + str(end_time))
     
     
 
