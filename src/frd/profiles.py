@@ -30,7 +30,7 @@ class Profile():
 
         self.voter_majority_outcomes = None
 
-    def create_issue_prefs(self, intensity_dist)->Tuple[np.ndarray, np.ndarray]:
+    def create_issue_prefs(self, intensity_dist):
         '''
         Create voter and cand prefs over issues and reset any values that were derived from voter/cands prefs 
         (e.g. distances, voter majority, and election profiles)
@@ -53,18 +53,18 @@ class Profile():
         elif intensity_dist is not None:
             if intensity_dist == 'uniform':
                 logging.debug('Generating prefs from uniformly distributed intensities')
-                self.v_intensities = np.random.uniform(low=0, high=1, size=(self.n_voters,))
-            elif intensity_dist == 'normal':
-                logging.debug('Generating prefs from normally distributed intensities with mean 0.5 and variance 1')
-                self.v_intensities = np.random.normal(0.5, 1, self.n_voters)
+                self.v_intensities = np.random.uniform(low=0.5, high=1, size=(self.n_voters,))
             else:
                 raise ValueError(f'Intensity dist not available: {intensity_dist}')
             self.v_pref = np.empty((self.n_voters, self.n_issues))
             for v in range(self.n_voters):
                 self.v_pref[v] = np.random.binomial(1, self.v_intensities[v], size=(self.n_issues))
-            self.v_pref = np.round(self.v_pref)
+            self.v_pref = np.round(self.v_pref) #is this necessary? aren't they already 0,1?
+        else:
+            raise ValueError(f'Intensity dist is None but voters_p is also None')
         self.c_pref = np.random.binomial(1, self.cands_p, size=(self.n_cands, self.n_issues))
         self.reset_derivatives()
+    
         return self.v_pref, self.c_pref
     
     def reset_derivatives(self)->None:

@@ -20,8 +20,7 @@ NOTE: Currently, you want to vary only one independent variable per experiment i
 
 def main():
     EXPERIMENTS = [] #Set which experiments to run. Runs all if list is empty
-    # EXPERIMENTS = ['RD_cands_p']
-    N_ITER = 1000
+    N_ITER = 50
     save=True
     show=False
     data_dir=Path("../data")
@@ -32,7 +31,7 @@ def main():
         experiments = json.load(f)
         f.close()
 
-    np.random.seed(1)
+    np.random.seed(10)
 
     for experiment_name in experiments.keys():
         if EXPERIMENTS and experiment_name not in EXPERIMENTS: continue #which experiments to run
@@ -48,8 +47,7 @@ def main():
         start = time.perf_counter()
 
         #run simulation for this experiment
-        _, param_names, n_iter, experiment_params, filename = simulate.sim_parallel(N_ITER, 
-        profile_param_vals, election_param_vals, del_voting_param_vals, save=save, experiment_name = experiment_name,data_dir=data_dir)
+        _, param_names, n_iter, experiment_params, filename = simulate.sim_parallel(N_ITER,profile_param_vals, election_param_vals, del_voting_param_vals, save=save, experiment_name = experiment_name,data_dir=data_dir)
 
         #save data and analysis (i.e. moments) and generate plots
         if save == True:
@@ -65,7 +63,6 @@ def main():
         logging.info(f'Avg runtime per iteration: {(end-start)/n_iter}')
 
     logging.info('Done')
-
 
 
 if __name__ == '__main__':
