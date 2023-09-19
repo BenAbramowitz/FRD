@@ -20,7 +20,7 @@ NOTE: Currently, you want to vary only one independent variable per experiment i
 
 def main():
     EXPERIMENTS = [] #Set which experiments to run. Runs all if list is empty
-    N_ITER = 50
+    N_ITER = 10000
     save=True
     show=False
     data_dir=Path("../data")
