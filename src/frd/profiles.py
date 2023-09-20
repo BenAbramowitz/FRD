@@ -44,8 +44,6 @@ class Profile():
         -------
         Since a single profile object may be used many times instead of creating a new profile in each instance, this method can be used to generate new issue prefs
         with the same parameters, and resets any values based on the issue prefs to prevent mismatch
-
-        For normally distributed intensities the mean is 0.5 and variance is 1.
         '''
 
         if intensity_dist is None and self.voters_p is not None:
@@ -53,7 +51,7 @@ class Profile():
         elif intensity_dist is not None:
             if intensity_dist == 'uniform':
                 logging.debug('Generating prefs from uniformly distributed intensities')
-                self.v_intensities = np.random.uniform(low=0.5, high=1, size=(self.n_voters,))
+                self.v_intensities = np.random.uniform(low=0, high=1, size=(self.n_voters,))
             else:
                 raise ValueError(f'Intensity dist not available: {intensity_dist}')
             self.v_pref = np.empty((self.n_voters, self.n_issues))
