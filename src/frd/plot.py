@@ -169,7 +169,8 @@ def plot_two_var(filename, experiment_name, l_var:str, x_var:str, y_var='mean', 
 
     sns.set(rc={"figure.figsize":(8, 8)})
     sns.set_style("white")
-    p = sns.lineplot(data=df, x=x_var, y=y_var, hue=l_var, dashes=False, markers=True, style=l_var)
+    # p = sns.lineplot(data=df, x=x_var, y=y_var, hue=l_var, dashes=False, markers=True, style=l_var)
+    p = sns.lineplot(data=df, x=x_var, y=y_var, hue=l_var, dashes=False)
 
     #format the plot
     title, xlabel, ylabel = label_plot(x_var, y_var)
@@ -207,6 +208,7 @@ def plot_moments(momentsfile:str, y_var:str='mean', save:bool=True, show:bool=Fa
     if len(varied) > 2:
         print(f'Moments file contains more than two independent variables, cannot automatically plot comparisons: {momentsfile}')
     elif len(varied) == 2:
+        print(f"Independent variables: {varied[0]} and {varied[1]}")
         plot_two_var(momentsfile, experiment_name, l_var=varied[0], x_var=varied[1], y_var=y_var, save=save, show=show, data_dir=data_dir)
         plot_two_var(momentsfile, experiment_name, l_var=varied[1], x_var=varied[0], y_var=y_var, save=save, show=show, data_dir=data_dir)
     elif len(varied) == 1:
