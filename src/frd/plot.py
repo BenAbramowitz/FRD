@@ -159,12 +159,8 @@ def plot_two_var(filename, experiment_name, l_var:str, x_var:str, y_var='mean', 
 
     sns.set(rc={"figure.figsize":(8, 8)})
     sns.set_style("white")
-<<<<<<< HEAD
     # p = sns.lineplot(data=df, x=x_var, y=y_var, hue=l_var, dashes=False, markers=True, style=l_var)
     p = sns.lineplot(data=df, x=x_var, y=y_var, hue=l_var, dashes=False)
-=======
-    p = sns.lineplot(data=df, x=x_var, y=y_var, hue=l_var, dashes=False, markers=False)
->>>>>>> parent of 4208ec1 (Merge branch 'main' of https://github.com/BenAbramowitz/FRD into main)
 
     #format the plot
     title, xlabel, ylabel = label_plot(x_var, y_var)
