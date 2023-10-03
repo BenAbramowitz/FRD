@@ -12,7 +12,7 @@
             "intensity_dist":["uniform"]
         },
         "election_param_vals":{
-            "election_rules":["borda"],
+            "election_rules":["max_approval","borda","plurality","rav", "irv","max_agreement", "random_winners"],
             "n_reps":[21]
         },
         "del_voting_param_vals":{
