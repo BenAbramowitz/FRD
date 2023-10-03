@@ -22,10 +22,20 @@ def check_filetype(filename, filetype='csv'):
 def var_to_title(s):
     if type(s) is not str: return s
     elif s.lower() in ['rav', 'irv']: return s.upper() #handle known acronyms
-    elif s.lower() == 'cands_p': return 'Cands p' #handle case where p is Bernoulli parameter
-    elif s.lower() == 'voters_p': return 'Voters p' #handle case where p is Bernoulli parameter
+    elif s.lower() == 'cands_p': return 'Candidates\' Bernoulli parameter' #handle case where p is Bernoulli parameter
+    elif s.lower() == 'voters_p': return 'Voters\' Bernoulli parameter' #handle case where p is Bernoulli parameter
     s = s.replace('_', ' ')
-    if s[0:2] == 'n ': return s[2:].title() #handle cases where var is number of something
+    if s[0:2] == 'n ':
+        if s[2:] == 'reps':
+            return 'Representatives'
+        elif s[2:] == 'cands':
+            return 'Candidates'
+        elif s[2:] == 'issues':
+            return 'Issues'
+        elif s[2:] == 'voters':
+            return 'Voters'
+        else:
+            return s[2:].title()
     return s.title()
 
 
@@ -49,21 +59,19 @@ def label_plot(x_var, y_var):
         raise ValueError(f"Do not know how to use {y_var} in title of plot")
     
     title += y_label
-    
-    title += " vs "
 
     if x_var.lower() == 'n_voters':
         x_label = "Number of Voters"
     elif x_var.lower() == 'n_cands':
-        x_label = "Number of Cands"
+        x_label = "Number of Candidates"
     elif x_var.lower() == 'n_issues':
         x_label = "Number of Issues"
     elif x_var.lower() == 'n_reps':
-        x_label = "Committee Size"
+        x_label = "Number of Representatives"
     elif x_var.lower() == 'voters_p':
         x_label = "Voters' Bernoulli Parameter"
     elif x_var.lower() == 'cands_p':
-        x_label = "Cands' Bernoulli Parameter"
+        x_label = "Candidates' Bernoulli Parameter"
     elif x_var.lower() == 'app_k':
         x_label = "Max Approvals Per Voter"
     elif x_var.lower() == "app_thresh":
@@ -79,7 +87,9 @@ def label_plot(x_var, y_var):
     elif x_var.lower() == "election_rules":
         x_label = ""
 
-    title += x_label
+    if x_label:
+        title += " vs "
+        title += x_label
 
     return title, x_label, y_label
 
@@ -89,13 +99,13 @@ def create_subtitle(x_var:str, y_var:str, params:dict):
         subtitle += f'{params["n_voters"]} voters'
     if x_var != 'n_cands':
         if subtitle != "": subtitle += ', '
-        subtitle += f'{params["n_cands"]} cands'
+        subtitle += f'{params["n_cands"]} candidates'
     if x_var != 'n_issues':
         if subtitle != "": subtitle += ', '
         subtitle += f'{params["n_issues"]} issues'
     if x_var != 'n_reps':
         if subtitle != "": subtitle += ', '
-        subtitle += f'{params["n_reps"]} reps'
+        subtitle += f'{params["n_reps"]} representatives'
     return subtitle
 
 # def compare_rules(filename, experiment_name, x_var:str, y_var='mean', save=True, show=False, data_dir='../data/'):
@@ -159,7 +169,7 @@ def plot_two_var(filename, experiment_name, l_var:str, x_var:str, y_var='mean', 
 
     sns.set(rc={"figure.figsize":(8, 8)})
     sns.set_style("white")
-    p = sns.lineplot(data=df, x=x_var, y=y_var, hue=l_var, dashes=False, markers=False)
+    p = sns.lineplot(data=df, x=x_var, y=y_var, hue=l_var, dashes=False, markers=True, style=l_var)
 
     #format the plot
     title, xlabel, ylabel = label_plot(x_var, y_var)
