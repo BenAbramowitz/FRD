@@ -30,7 +30,7 @@ src contains the central package /frd, the main package for with modules for run
 
 main.py and tests are in the same directory as src.
 
-An instance of an FRD problem consists of three sequential components: (1) creating preference profiles, (2) an election, and (3) weighted/delegative voting.
+An instance of an FRD problem consists of three sequential components: (1) creating preference profiles, (2) an election, and (3) weighted/delegative voting. There is one module for each of these steps, so they are prefixed m01, m02, and m03 respectively, with m00 reserved for general helper/utility functions. Naming conventions for modules within each directory is that we try to keep them ordered so that mX only imports mY if Y < X. So m02_election_rules can import m01_profiles but not vice versa. This helps prevent any potential import cycles.
 
 ### To Add an Election Rule:
 1. Implement the rule in frd/m02_election_rules.py
@@ -40,9 +40,8 @@ An instance of an FRD problem consists of three sequential components: (1) creat
 ### Implementation Details
 - Currently ordinal prefs (orders, ordermaps) cannot be incomplete. This is because these ordinal preferences are dicts where keys are voters and values are static 1D numpy arrays of fixed length.
 - Unlike the other rules, RAV does not break ties randomly. It breaks ties lexicographically. However, this does not impact our current experiments because all agent prefs are independent Bernoulli random variables.
-- Chamberlain-Courant and k-Medians are not currently implemented (both NP-Hard).
-- Preference intensities need to be drawn from [0,1] or some sub-interval of it. Currently we only draw them uniformly. Drawing them from a normal distribution requires truncation at the boundaries 0 and 1, and numpy doesn't have a function for this. Scipy has a truncnorm function for this, but causes headaches trying to run on old MacOS, and would rather avoid the dependency if possible. Would be easier to draw from numpy.random.beta() if we need something other than random.
-- Currently if an agent delegates on one issue they delegate on all issues rather than independently per-issue. Doesn't matter currently because prefs over issues for each agent are drawn i.i.d. Bernoulli, but might matter in the future.
+- Currently Chamberlain-Courant and k-Medians are not currently implemented (both NP-Hard).
+- Functionality for ordermaps is currently commented out because it is not currently being used for any election rule
 
 
 ### Bottlenecks and Efficiency
@@ -52,7 +51,6 @@ An instance of an FRD problem consists of three sequential components: (1) creat
 - Delegations for FRD currently implemented using nested for loops, making them slow. Can speed up later if needed.
 
 ## To Do
-- Parameters for intensity distribution should be arguments, not hard coded (currently just low and high for uniform)
+- Add experiments for FRD to config
 - Complete unit testing (in test_frd.py)
-- Add Chamberlain Courant and k-Medians to replicate NP-Hard rules
-
+- Add Chamberlain Courant and k-Medians
