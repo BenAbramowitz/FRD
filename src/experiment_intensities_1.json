@@ -1,5 +1,5 @@
 {
-    "FRD_borda_uniform_intensities_low0":{
+    "FRD_borda_uniform_intensities_low05":{
         "n_iter":10000,
         "profile_param_vals":{
             "n_voters":[100],

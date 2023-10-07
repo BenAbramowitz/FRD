@@ -51,7 +51,7 @@ class Profile():
         elif intensity_dist is not None:
             if intensity_dist == 'uniform':
                 logging.debug('Generating prefs from uniformly distributed intensities')
-                self.v_intensities = np.random.uniform(low=0, high=1, size=(self.n_voters,))
+                self.v_intensities = np.random.uniform(low=0.5, high=1, size=(self.n_voters,))
             else:
                 raise ValueError(f'Intensity dist not available: {intensity_dist}')
             self.v_pref = np.empty((self.n_voters, self.n_issues))
