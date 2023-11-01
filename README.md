@@ -40,17 +40,8 @@ An instance of an FRD problem consists of three sequential components: (1) creat
 ### Implementation Details
 - Currently ordinal prefs (orders, ordermaps) cannot be incomplete. This is because these ordinal preferences are dicts where keys are voters and values are static 1D numpy arrays of fixed length.
 - Unlike the other rules, RAV does not break ties randomly. It breaks ties lexicographically. However, this does not impact our current experiments because all agent prefs are independent Bernoulli random variables.
-- Currently Chamberlain-Courant and k-Medians are not currently implemented (both NP-Hard).
-- Functionality for ordermaps is currently commented out because it is not currently being used for any election rule
 
 
 ### Bottlenecks and Efficiency
 - The n_reps param (committee size) has a relatively big impact on runtime because increasing it slows down the election, weighting of the reps, and weighted majority voting by the reps.
-- RAV currently runs much slower than borda, plurality, max_approval, and max_agreement (~20x). It uses for loops and a dict of approvals rather than approval_indicators.
-- score_orders and score_ordermaps currently use nested for loops that are relatively slow. Can speed up with map or comprehensions later if needed. Only rules currently built on scoring rules are Borda and Plurality which are both fast even with big params.
-- Delegations for FRD currently implemented using nested for loops, making them slow. Can speed up later if needed.
-
-## To Do
-- Add experiments for FRD to config
-- Complete unit testing (in test_frd.py)
-- Add Chamberlain Courant and k-Medians
+- RAV currently runs much slower than other rules (~20x). It uses for loops and a dict of approvals rather than approval_indicators.
