@@ -119,7 +119,7 @@ def max_approval(profile:profiles.Profile, n_winners:int, seed=None)->Tuple[np.n
 
 def rav(profile:profiles.Profile, n_winners:int)->Tuple[np.ndarray, np.ndarray]:
     '''
-    Implements Repeated Alternative Vote with lexicographic teibreaking
+    Implements Re-weighted Approval Voting with lexicographic teibreaking
     The election scores are approval counts, determined by the profile not really by the rule
     '''
     n_cands = profile.get_n_cands()
