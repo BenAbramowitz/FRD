@@ -72,8 +72,8 @@ def label_plot(x_var, y_var):
         x_label = "Default Weighting"
     elif x_var.lower() == "del_style":
         x_label = "Delegation Style"
-    elif x_var.lower() == "best_k":
-        x_label = "Best k"
+    elif x_var.lower() == "best_k" or x_var.lower() == "best_x":
+        x_label = "Best x"
     elif x_var.lower() == "n_delegators":
         x_label = "Number of Delegators"
     elif x_var.lower() == "election_rules":
